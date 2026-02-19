@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ae-backend
+    runtime: node
+    repo: https://github.com/Felipeperesfr/AE---APP
+    branch: main
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
