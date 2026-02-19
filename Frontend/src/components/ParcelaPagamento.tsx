@@ -88,7 +88,7 @@ export default function ParcelaPagamento({
 
                     onChange(e.target.value)
 
-                    const response = await fetch(`http://localhost:3001/api/editpagamento/${idPagamento}`, {
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/editpagamento/${idPagamento}`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json", },
                         body: JSON.stringify({ parcelaEdit: nParcela, valorParcela: e.target.value }),
