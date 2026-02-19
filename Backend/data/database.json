@@ -1,0 +1,896 @@
+{
+  "escolas": [
+    {
+      "nome": "Ederlindo",
+      "id": 0
+    },
+    {
+      "nome": "Messias",
+      "id": 1
+    },
+    {
+      "nome": "Joaquim Saraiva",
+      "id": 2
+    },
+    {
+      "nome": "Museu",
+      "id": 3
+    },
+    {
+      "nome": "Antônio Thomaz",
+      "id": 4
+    },
+    {
+      "nome": "Juvenília",
+      "id": 5
+    },
+    {
+      "nome": "Bom Jesus",
+      "id": 6
+    },
+    {
+      "nome": "Dr. Duarte",
+      "id": 7
+    },
+    {
+      "nome": "Honório Guimarães",
+      "id": 8
+    },
+    {
+      "nome": "Ignácio Paes Leme",
+      "id": 9
+    },
+    {
+      "nome": "João Rezende",
+      "id": 10
+    },
+    {
+      "nome": "Unificadas",
+      "id": 11
+    },
+    {
+      "nome": "Athenas",
+      "id": 12
+    },
+    {
+      "nome": "Hortêncio Diniz",
+      "id": 13
+    }
+  ],
+  "alunos": [
+    {
+      "id": 1770118967720,
+      "nome": "AMANDA VIEIRA DOS SANTOS",
+      "escola": "Athenas",
+      "tel1": "34988818005",
+      "tel2": "",
+      "ano": "3º",
+      "turma": "TRD",
+      "status": "Pagamento atrasado",
+      "valor": 197,
+      "metodo": "PIX",
+      "parcelas": 6
+    },
+    {
+      "id": 1770119919821,
+      "nome": "ADRIELI SOUZA ALMEIDA",
+      "escola": "Bom Jesus",
+      "tel1": "34996368620",
+      "tel2": "34996368620",
+      "ano": "5º",
+      "turma": "A",
+      "status": "Pagamento em dia",
+      "parcelas": 8,
+      "valor": 120,
+      "metodo": "PIX",
+      "anotacoes": "Teste"
+    },
+    {
+      "id": 1770120050712,
+      "nome": "ALANNA GOMES PEREIRA",
+      "escola": "Ederlindo",
+      "tel1": "34992342780",
+      "tel2": "",
+      "ano": "3º",
+      "turma": "2",
+      "status": "Pagamento em dia",
+      "parcelas": 4,
+      "valor": 197,
+      "metodo": "PIX"
+    },
+    {
+      "id": 1770121068786,
+      "nome": "AMANDA CORTES DUTRA",
+      "escola": "Bom Jesus",
+      "tel1": "34991503900",
+      "tel2": "",
+      "ano": "5º",
+      "turma": "B",
+      "status": "Pagamento atrasado",
+      "parcelas": 1,
+      "valor": 80,
+      "metodo": "CC"
+    },
+    {
+      "id": 1770122086750,
+      "nome": "ANA CECILIA MAGALHAES SANTANA",
+      "escola": "Hortêncio Diniz",
+      "tel1": "34996463565",
+      "tel2": "",
+      "ano": "3º",
+      "turma": "2",
+      "anotacoes": "",
+      "status": "Pagamento atrasado",
+      "parcelas": 8,
+      "valor": 197,
+      "metodo": "PIX"
+    },
+    {
+      "id": 1770294044398,
+      "nome": "Felipe Peres",
+      "escola": "Bom Jesus",
+      "tel1": "123123123",
+      "tel2": "",
+      "ano": "5º",
+      "turma": "A",
+      "anotacoes": "",
+      "status": "Pagamento atrasado",
+      "parcelas": "4",
+      "valor": "197",
+      "metodo": "BOLETO"
+    }
+  ],
+  "pagamentos": [
+    {
+      "id": 1770118967720,
+      "p1": "",
+      "p2": "",
+      "p3": "",
+      "p4": "",
+      "p5": "",
+      "p6": ""
+    },
+    {
+      "id": 1770119919821,
+      "p1": "PIX",
+      "p2": "PIX",
+      "p3": "",
+      "p4": "",
+      "p5": "",
+      "p6": "",
+      "p7": "",
+      "p8": ""
+    },
+    {
+      "id": 1770120050712,
+      "p1": "PIX",
+      "p2": "PIX",
+      "p3": "",
+      "p4": ""
+    },
+    {
+      "id": 1770121068786,
+      "p1": ""
+    },
+    {
+      "id": 1770122086750,
+      "p1": "",
+      "p2": "",
+      "p3": "",
+      "p4": "",
+      "p5": "",
+      "p6": "",
+      "p7": "",
+      "p8": ""
+    },
+    {
+      "id": 1770294044398,
+      "p1": "",
+      "p2": "",
+      "p3": "",
+      "p4": ""
+    }
+  ],
+  "products": [
+    {
+      "nome": "Açucar Refinado",
+      "unidade": "kg",
+      "valor": 0.03,
+      "fornecedor": "Supermercado",
+      "id": 2
+    },
+    {
+      "id": 1767874175773,
+      "nome": "Café 3 corações",
+      "unidade": "un",
+      "valor": 0.01,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874280185,
+      "nome": "Creme de leite (Itambé ou similar)",
+      "unidade": "kg",
+      "valor": 0.015,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874291665,
+      "nome": "Detergente Líquido Neutro",
+      "unidade": "Galão",
+      "valor": 0.002,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874335770,
+      "nome": "Leite Integral (Cemil ou similar)",
+      "unidade": "L",
+      "valor": 0.06,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874349947,
+      "nome": "Maionese Helmans",
+      "unidade": "lata grande (3kg)",
+      "valor": 0.007,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874372240,
+      "nome": "Margarina Qually",
+      "unidade": "kg",
+      "valor": 0.0033,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874502388,
+      "nome": "Milho",
+      "unidade": "lata grande",
+      "valor": 0.0042,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874516511,
+      "nome": "Óleo de Soja",
+      "unidade": "L",
+      "valor": 0.015,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874528751,
+      "nome": "Ovos",
+      "unidade": "un",
+      "valor": 0.042,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874539551,
+      "nome": "Pão de Forma (Pulman)",
+      "unidade": "un",
+      "valor": 0.03,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874561016,
+      "nome": "Pó Royal (fermento)",
+      "unidade": "unidade grande",
+      "valor": 0.0013,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874576013,
+      "nome": "Sakura",
+      "unidade": "L",
+      "valor": 0.0017,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874790438,
+      "nome": "Sal",
+      "unidade": "kg",
+      "valor": 0.0035,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874805694,
+      "nome": "Sazon Salada",
+      "unidade": "pc",
+      "valor": 0.0067,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874821252,
+      "nome": "Tempero (Sal + Alho)",
+      "unidade": "kg",
+      "valor": 0.0017,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874835494,
+      "nome": "Toddy",
+      "unidade": "kg",
+      "valor": 0.0067,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874850521,
+      "nome": "Trigo para Quibe",
+      "unidade": "pc de 500g",
+      "valor": 0.0067,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874864359,
+      "nome": "Vinagre de Maçã",
+      "unidade": "un",
+      "valor": 0.0017,
+      "fornecedor": "Supermercado"
+    },
+    {
+      "id": 1767874957591,
+      "nome": "Peito de Frango",
+      "unidade": "kg",
+      "valor": 0.01,
+      "fornecedor": "Renato"
+    },
+    {
+      "id": 1767874966604,
+      "nome": "Carne",
+      "unidade": "kg",
+      "valor": 0.01,
+      "fornecedor": "Renato"
+    },
+    {
+      "id": 1767874981438,
+      "nome": "Pão Sírio",
+      "unidade": "pacotes",
+      "valor": 0.06,
+      "fornecedor": "Master Pães"
+    },
+    {
+      "id": 1767874991334,
+      "nome": "Azeitona preta inteira",
+      "unidade": "kg",
+      "valor": 0.0032,
+      "fornecedor": "Pura Nata"
+    },
+    {
+      "id": 1767875001055,
+      "nome": "Azeitona verde fatiada",
+      "unidade": "kg",
+      "valor": 0.008,
+      "fornecedor": "Pura Nata"
+    },
+    {
+      "id": 1767875010657,
+      "nome": "Azeitona verde inteira",
+      "unidade": "kg",
+      "valor": 0.0064,
+      "fornecedor": "Pura Nata"
+    },
+    {
+      "id": 1767875060613,
+      "nome": "Ovos de codorna",
+      "unidade": "pacotes (30 por pacote)",
+      "valor": 3.2,
+      "fornecedor": "Pura Nata"
+    },
+    {
+      "id": 1767875069340,
+      "nome": "Sorvete",
+      "unidade": "caixas",
+      "valor": 0.01,
+      "fornecedor": "Hélio"
+    },
+    {
+      "id": 1767875115520,
+      "nome": "Quibe",
+      "unidade": "kg",
+      "valor": 0.0344,
+      "fornecedor": "Thiago"
+    },
+    {
+      "id": 1767875126824,
+      "nome": "Morango Fresco",
+      "unidade": "bandeijas",
+      "valor": 0.04,
+      "fornecedor": "Carlos"
+    },
+    {
+      "id": 1767875136278,
+      "nome": "Morango Congelado",
+      "unidade": "kg",
+      "valor": 0.0315,
+      "fornecedor": "Carlos"
+    },
+    {
+      "id": 1767875146520,
+      "nome": "Acelga",
+      "unidade": "un",
+      "valor": 0.001,
+      "fornecedor": "Kátia"
+    },
+    {
+      "id": 1767875156461,
+      "nome": "Agrião",
+      "unidade": "un",
+      "valor": 0.0015,
+      "fornecedor": "Kátia"
+    },
+    {
+      "id": 1767875178706,
+      "nome": "Alface Crespa",
+      "unidade": "un",
+      "valor": 0.04,
+      "fornecedor": "Kátia"
+    },
+    {
+      "id": 1767875187399,
+      "nome": "Cheiro Verde",
+      "unidade": "un",
+      "valor": 0.012,
+      "fornecedor": "Kátia"
+    },
+    {
+      "id": 1767875197089,
+      "nome": "Chicória",
+      "unidade": "un",
+      "valor": 0.001,
+      "fornecedor": "Kátia"
+    },
+    {
+      "id": 1767875207309,
+      "nome": "Hortelã",
+      "unidade": "un",
+      "valor": 0.004,
+      "fornecedor": "Kátia"
+    },
+    {
+      "id": 1767875216064,
+      "nome": "Manjericão Verde",
+      "unidade": "un",
+      "valor": 0.004,
+      "fornecedor": "Kátia"
+    },
+    {
+      "id": 1767875225605,
+      "nome": "Manjericão Roxo",
+      "unidade": "un",
+      "valor": 0.004,
+      "fornecedor": "Kátia"
+    },
+    {
+      "id": 1767875243263,
+      "nome": "Rúcula",
+      "unidade": "un",
+      "valor": 0.01,
+      "fornecedor": "Kátia"
+    },
+    {
+      "id": 1767875253688,
+      "nome": "Abacaxi",
+      "unidade": "un",
+      "valor": 0.008,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875262525,
+      "nome": "Abobrinha",
+      "unidade": "kg",
+      "valor": 0.007,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875272169,
+      "nome": "Alho com casca",
+      "unidade": "kg",
+      "valor": 0.00375,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875282777,
+      "nome": "Alho sem casca",
+      "unidade": "kg",
+      "valor": 0.00125,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875301163,
+      "nome": "Ameixa Fresca",
+      "unidade": "un",
+      "valor": 0.03,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875315900,
+      "nome": "Banana Nanica",
+      "unidade": "un",
+      "valor": 0.056,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875373700,
+      "nome": "Berinjela",
+      "unidade": "kg",
+      "valor": 0.01,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875382075,
+      "nome": "Cebola",
+      "unidade": "kg",
+      "valor": 0.019,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875390815,
+      "nome": "Cenoura",
+      "unidade": "kg",
+      "valor": 0.011,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875399408,
+      "nome": "Kiwi",
+      "unidade": "kg",
+      "valor": 0.003,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875408853,
+      "nome": "Limão",
+      "unidade": "un",
+      "valor": 0.037,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875437437,
+      "nome": "Maçã",
+      "unidade": "kg",
+      "valor": 0.004,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875447724,
+      "nome": "Mamão grande",
+      "unidade": "un",
+      "valor": 0.006,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875456543,
+      "nome": "Manga Palmer",
+      "unidade": "un",
+      "valor": 0.013,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875465780,
+      "nome": "Melancia",
+      "unidade": "un",
+      "valor": 0.004,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875474853,
+      "nome": "Melão",
+      "unidade": "un",
+      "valor": 0.006,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875484341,
+      "nome": "Pepino japonês",
+      "unidade": "kg",
+      "valor": 0.003,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875494577,
+      "nome": "Pera",
+      "unidade": "un",
+      "valor": 0.03,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875505657,
+      "nome": "Pimenta",
+      "unidade": "g",
+      "valor": 0.6,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875516321,
+      "nome": "Pimenta de cheiro",
+      "unidade": "g",
+      "valor": 1,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875524736,
+      "nome": "Pimentão amarelo",
+      "unidade": "un",
+      "valor": 0.01,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875536730,
+      "nome": "Pimentão vermelho",
+      "unidade": "un",
+      "valor": 0.01,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875546858,
+      "nome": "Tomate Cereja P/ Salada",
+      "unidade": "kg",
+      "valor": 1,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875565761,
+      "nome": "Tomate P/ Salada",
+      "unidade": "kg",
+      "valor": 0.007,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875584097,
+      "nome": "Uva Verde (mesa)",
+      "unidade": "kg",
+      "valor": 0.008,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875601809,
+      "nome": "Uva Vermelha (mesa)",
+      "unidade": "kg",
+      "valor": 0.008,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875628378,
+      "nome": "Abacaxi (bar)",
+      "unidade": "un",
+      "valor": 0.026,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875667655,
+      "nome": "Limão  (bar)",
+      "unidade": "kg",
+      "valor": 0.03,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875721008,
+      "nome": "Maracujá (bar)",
+      "unidade": "kg",
+      "valor": 0.052,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875730285,
+      "nome": "Uva Verde (bar)",
+      "unidade": "kg",
+      "valor": 0.01,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875740772,
+      "nome": "Uva Vermelha (bar)",
+      "unidade": "kg",
+      "valor": 0.01,
+      "fornecedor": "Rosa"
+    },
+    {
+      "id": 1767875822313,
+      "nome": "Rondelli",
+      "unidade": "kg",
+      "valor": 0.047,
+      "fornecedor": "Adão"
+    },
+    {
+      "id": 1767875832898,
+      "nome": "Balas diversas",
+      "unidade": "",
+      "valor": 0,
+      "fornecedor": "Iara"
+    },
+    {
+      "id": 1767875840343,
+      "nome": "Canela",
+      "unidade": "",
+      "valor": 0,
+      "fornecedor": "Iara"
+    },
+    {
+      "id": 1767875845639,
+      "nome": "Cravo",
+      "unidade": "",
+      "valor": 0,
+      "fornecedor": "Iara"
+    },
+    {
+      "id": 1767875850876,
+      "nome": "Ervas Finas",
+      "unidade": "",
+      "valor": 0,
+      "fornecedor": "Iara"
+    },
+    {
+      "id": 1767875856911,
+      "nome": "Orégano",
+      "unidade": "",
+      "valor": 0,
+      "fornecedor": "Iara"
+    },
+    {
+      "id": 1767875862691,
+      "nome": "Pimenta Calabresa",
+      "unidade": "",
+      "valor": 0,
+      "fornecedor": "Iara"
+    },
+    {
+      "id": 1767875867982,
+      "nome": "Pimenta do Reino",
+      "unidade": "",
+      "valor": 0,
+      "fornecedor": "Iara"
+    },
+    {
+      "id": 1767875893791,
+      "nome": "Vodka",
+      "unidade": "L",
+      "valor": 0.0667,
+      "fornecedor": "Iara"
+    },
+    {
+      "id": 1767875898997,
+      "nome": "Uva Passa",
+      "unidade": "",
+      "valor": 0,
+      "fornecedor": "Iara"
+    },
+    {
+      "id": 1767875913125,
+      "nome": "Amendoim Verde",
+      "unidade": "kg",
+      "valor": 0.004,
+      "fornecedor": "André"
+    },
+    {
+      "id": 1767875929710,
+      "nome": "Batata Palha",
+      "unidade": "pc grande",
+      "valor": 0.007,
+      "fornecedor": "André"
+    },
+    {
+      "id": 1767875939785,
+      "nome": "Paõzinho Francês p/ Churrasco",
+      "unidade": "kg",
+      "valor": 0.003,
+      "fornecedor": "André"
+    },
+    {
+      "id": 1767875949667,
+      "nome": "Requeijão culinário",
+      "unidade": "peça (1,8kg)",
+      "valor": 0.0075,
+      "fornecedor": "André"
+    },
+    {
+      "id": 1767875961695,
+      "nome": "Tomates Secos",
+      "unidade": "baldes de 2kg",
+      "valor": 0.0025,
+      "fornecedor": "André"
+    },
+    {
+      "id": 1767875971980,
+      "nome": "Torrada",
+      "unidade": "pc grande",
+      "valor": 0.01,
+      "fornecedor": "André"
+    },
+    {
+      "id": 1767876035613,
+      "nome": "Blanquet Peru Fatiado",
+      "unidade": "kg",
+      "valor": 0.064,
+      "fornecedor": "Frios"
+    },
+    {
+      "id": 1767876066814,
+      "nome": "Calabresa Fatiada",
+      "unidade": "kg",
+      "valor": 0.093,
+      "fornecedor": "Frios"
+    },
+    {
+      "id": 1767876078631,
+      "nome": "Muçarela Peça",
+      "unidade": "kg",
+      "valor": 0.07,
+      "fornecedor": "Frios"
+    },
+    {
+      "id": 1767876092127,
+      "nome": "Muçarela Fatiada (Calu ou Similar)",
+      "unidade": "kg",
+      "valor": 0.064,
+      "fornecedor": "Frios"
+    },
+    {
+      "id": 1767876142458,
+      "nome": "Peito de Peru Defumado",
+      "unidade": "kg",
+      "valor": 0.087,
+      "fornecedor": "Frios"
+    },
+    {
+      "id": 1767876151690,
+      "nome": "Presunto Peça (Resende ou similar)",
+      "unidade": "kg",
+      "valor": 0.104,
+      "fornecedor": "Frios"
+    },
+    {
+      "id": 1767876169178,
+      "nome": "Presunto Fatiado (Resende ou Similar)",
+      "unidade": "kg",
+      "valor": 0.064,
+      "fornecedor": "Frios"
+    },
+    {
+      "id": 1767876234776,
+      "nome": "Provolone fino fatiado",
+      "unidade": "kg",
+      "valor": 0.064,
+      "fornecedor": "Frios"
+    },
+    {
+      "id": 1767876406752,
+      "nome": "Provolone Grosso inteiro",
+      "unidade": "kg",
+      "valor": 0.087,
+      "fornecedor": "Frios"
+    },
+    {
+      "id": 1767876422695,
+      "nome": "Queijo Prato fatiado",
+      "unidade": "kg",
+      "valor": 0.087,
+      "fornecedor": "Frios"
+    },
+    {
+      "id": 1767876841939,
+      "nome": "Queijo Prato inteiro",
+      "unidade": "kg",
+      "valor": 0.086,
+      "fornecedor": "Frios"
+    },
+    {
+      "id": 1767876857384,
+      "nome": "Queijo Gouda",
+      "unidade": "kg",
+      "valor": 0.064,
+      "fornecedor": "Frios"
+    },
+    {
+      "id": 1767876906208,
+      "nome": "Salaminho",
+      "unidade": "kg",
+      "valor": 0.064,
+      "fornecedor": "Frios"
+    },
+    {
+      "id": 1767876955367,
+      "nome": "Total Frios",
+      "unidade": "kg",
+      "valor": 0.18,
+      "fornecedor": "Frios"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+.main-container header{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to right, #101010, #830101);
+  color: white;
+  box-shadow: 0 12px 8px rgba(206, 50, 0, 0.2);
+  height: 80px;
+}
+
+header img
+{   
+  left: 10px;
+  top: 12px;
+  position: absolute;
+  width: 90px;
+  height: 55px;
+}
+

@@ -1,0 +1,70 @@
+.modern-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+
+.modern-tooltip {
+  position: absolute;
+  white-space: nowrap;
+
+  background: #222;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.modern-tooltip.horizontal-right {
+  left: var(--tooltip-distance);
+  top: 50%;
+  transform: translateY(-50%) translateX(-10px);
+}
+
+.modern-tooltip.horizontal-right.show {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+.modern-tooltip.horizontal-left {
+  right: var(--tooltip-distance);
+  top: 50%;
+  transform: translateY(-50%) translateX(10px);
+}
+
+.modern-tooltip.horizontal-left.show {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+.modern-tooltip.vertical-down {
+  top: var(--tooltip-distance);
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+}
+
+.modern-tooltip.vertical-down.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.modern-tooltip.vertical-up {
+  bottom: var(--tooltip-distance);
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+}
+
+.modern-tooltip.vertical-up.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+

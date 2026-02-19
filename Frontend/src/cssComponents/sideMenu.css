@@ -1,0 +1,54 @@
+
+.side-menu
+{
+  position: absolute;
+  top: 100px;
+  background-color: rgb(230, 155, 112);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  padding: 15px 0 15px 0;
+  margin: 15px 0 0 15px;
+  font-size: 13px;
+  width: 60px;
+  border-radius: 25px;
+  z-index: 30;
+}
+
+.menu-entry .modern-item
+{
+  font-size: 40px;
+  color: black;
+}
+
+.menu-entry .modern-item:hover
+{
+  color: rgb(241, 241, 241);
+  cursor: pointer;
+}
+
+.side-menu .hide-menu
+{
+  margin-left: 5px;
+  align-self: flex-start;
+}
+
+.side-menu .hide-menu:hover{
+  color: rgb(241, 241, 241);
+  cursor: pointer;
+}
+
+.open-menu
+{
+  position: absolute;
+  top: 80px;
+  left: 10px;
+  font-size: 30px;
+}
+
+.open-menu:hover{
+  color: rgb(187, 175, 49);
+  cursor: pointer;
+}
+

@@ -1,0 +1,15 @@
+.home-main-container
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.home-main-container h1{
+    text-align: center;
+}
+
+.highlight-red {
+  color: red;
+}
