@@ -87,7 +87,6 @@ export default function ParcelaPagamento({
                     setTextoParcela(e.target.value)
 
                     onChange(e.target.value)
-
                     const response = await fetch(`${process.env.REACT_APP_API_URL}/editpagamento/${idPagamento}`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json", },
