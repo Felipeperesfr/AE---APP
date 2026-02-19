@@ -1,3 +1,4 @@
+/* 
 import ModernIcon from "../components/ModernIcon";
 import React, { useState, useEffect, useMemo } from "react";
 import { faSchool, faFilterCircleXmark, faClose, faPenToSquare, faTrash, faPlusCircle, faFilter, faReceipt, faDatabase, IconDefinition } from "@fortawesome/free-solid-svg-icons";
@@ -83,3 +84,4 @@ export default function GestãoFormandos() {
     </div>
   )
 }
+  */
