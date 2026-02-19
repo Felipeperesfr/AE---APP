@@ -105,7 +105,7 @@ export default function ListaCompras() {
   // Funções useEffect
   useEffect(() => {
     const loadData = async () => {
-      const response = await fetch("http://localhost:3001/api/getproducts");
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/getproducts`);
       const data = await response.json();
       //console.log(data)
       setProducts(data);
@@ -159,7 +159,7 @@ export default function ListaCompras() {
 
 
   const deleteProduct = async (id: number): Promise<void> => {
-    const response = await fetch(`http://localhost:3001/api/deleteproduct/${id}`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/deleteproduct/${id}`, {
       method: "DELETE"
     })
 
@@ -275,7 +275,7 @@ export default function ListaCompras() {
                 }
 
 
-                const response = await fetch("http://localhost:3001/api/newproduct", {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/newproduct`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json", },
                   body: JSON.stringify({ nome, unidade, valor, fornecedor }),
@@ -324,7 +324,7 @@ export default function ListaCompras() {
                   return
                 }
 
-                const response = await fetch(`http://localhost:3001/api/editproduct/${selectedProduct!.id}`, {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/editproduct/${selectedProduct!.id}`, {
                   method: "PUT",
                   headers: { "Content-Type": "application/json", },
                   body: JSON.stringify({ nome, unidade, valor, fornecedor }),
@@ -376,7 +376,7 @@ export default function ListaCompras() {
                         const newTab = window.open("", "_blank");
                         if (newTab)
                           newTab.document.write("<p>Gerando PDF...</p>");
-                        const response = await fetch("http://localhost:3001/api/getPDFFiles", {
+                        const response = await fetch(`${process.env.REACT_APP_API_URL}/getPDFFiles`, {
                           method: "POST",
                           body: JSON.stringify({
                             fornecedor: fornecedorPDF,

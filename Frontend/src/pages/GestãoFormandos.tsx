@@ -107,7 +107,7 @@ export default function GestãoFormandos() {
 
 
     const sendAnotacoesValue = async (id: number) => {
-        const response = await fetch(`http://localhost:3001/api/editaluno/${id}?from=baixaAnotacao`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/editaluno/${id}?from=baixaAnotacao`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", },
             body: JSON.stringify({ anotacoes: valueAnotacao }),
@@ -126,7 +126,7 @@ export default function GestãoFormandos() {
     // Funções Requests
 
     const deleteAluno = async (id: number): Promise<void> => {
-        const response = await fetch(`http://localhost:3001/api/deletealuno/${id}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/deletealuno/${id}`, {
             method: "DELETE"
         })
 
@@ -309,7 +309,7 @@ export default function GestãoFormandos() {
             }
         })
 
-        fetch("http://localhost:3001/api/sync-status", {
+        fetch(`${process.env.REACT_APP_API_URL}/sync-status`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ alunos: alunosAtualizados })
@@ -326,9 +326,9 @@ export default function GestãoFormandos() {
     useEffect(() => {
         const loadData = async () => {
             const [alunosRes, escolasRes, pagamentoRes] = await Promise.all([
-                fetch("http://localhost:3001/api/getalunos"),
-                fetch("http://localhost:3001/api/getescolas"),
-                fetch("http://localhost:3001/api/getpagamentos"),
+                fetch(`${process.env.REACT_APP_API_URL}/getalunos`),
+                fetch(`${process.env.REACT_APP_API_URL}/getescolas`),
+                fetch(`${process.env.REACT_APP_API_URL}/getpagamentos`),
             ]);
 
             const alunosData = await alunosRes.json();
@@ -513,7 +513,7 @@ export default function GestãoFormandos() {
                                 }
 
 
-                                const response = await fetch("http://localhost:3001/api/newaluno", {
+                                const response = await fetch(`${process.env.REACT_APP_API_URL}/newaluno`, {
                                     method: "POST",
                                     headers: { "Content-Type": "application/json", },
                                     body: JSON.stringify({ nome, escola, tel1, tel2, ano, turma, anotacoes, status, parcelas, valor, metodo }),
@@ -647,7 +647,7 @@ export default function GestãoFormandos() {
                                 }
 
 
-                                const response = await fetch(`http://localhost:3001/api/editaluno/${selectedAluno.id}`, {
+                                const response = await fetch(`${process.env.REACT_APP_API_URL}/editaluno/${selectedAluno.id}`, {
                                     method: "PUT",
                                     headers: { "Content-Type": "application/json", },
                                     body: JSON.stringify({ nome, escola, tel1, tel2, ano, turma, anotacoes, status, parcelas, valor, metodo }),
@@ -792,7 +792,7 @@ export default function GestãoFormandos() {
                                                 <span className="menor-espaço">{a.valor}</span>
                                                 <span className="menor-espaço">{a.metodo}</span>
                                                 <span className="maior-espaço"><select name="status-select" value={a.status} onChange={async (e) => {
-                                                    const response = await fetch(`http://localhost:3001/api/editaluno/${a.id}`, {
+                                                    const response = await fetch(`${process.env.REACT_APP_API_URL}/editaluno/${a.id}`, {
                                                         method: "PUT",
                                                         headers: { "Content-Type": "application/json", },
                                                         body: JSON.stringify({ nome: a.nome, escola: a.escola, tel1: a.tel1, tel2: a.tel2, ano: a.ano, turma: a.turma, anotacoes: a.anotacoes, status: e.target.value, parcelas: a.parcelas, valor: a.valor, metodo: a.metodo }),
