@@ -1,1 +1,73 @@
+.login-container .layout{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.381);
+}
 
+.login-container .content{
+    border-radius: 5%;
+    width: 350px;
+    height: 250px;
+    background-color: rgb(255, 255, 255);
+    padding: 10px;
+} 
+
+.content .info{
+    display: flex;
+    flex-direction: column;
+    height: 150px;
+    justify-content: space-around;
+}
+
+.content .user{
+    display: flex;
+}
+
+.content .password{
+    display: flex;
+}
+
+.content .inputlayout
+{
+    display: flex;
+    border: solid 1px black;
+     height: 32px;
+     align-self: center ;
+}
+
+.inputlayout span{
+    align-self: center;
+    margin-right:3px;
+}
+
+.inputlayout span:hover{
+    cursor: pointer;
+    color: rgb(227, 197, 27);
+}
+
+.content input{
+    flex: 1;
+    height: 30px;
+    align-self: center;
+    padding-left: 10px;
+    font-size: 20px;
+    border: solid 1px black;
+}
+
+.content .inputSenha{
+    border: none;
+}
+
+.content p{
+    width: 70px;
+    margin-right: 5px;
+    text-align: end;
+}
+
+.content h1{
+    align-self: center;
+    margin: 0;
+}

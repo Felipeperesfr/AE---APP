@@ -58,10 +58,13 @@ const EMPTY_DB = {
   alunos: [],
   pagamentos: [],
   products: [],
-  escolas: []
+  escolas: [],
 };
 
-function isPagamentoAtrasado(value: string | number, parcelaMes: number): boolean {
+function isPagamentoAtrasado(
+  value: string | number,
+  parcelaMes: number,
+): boolean {
   if (value === "PIX" || value === "CC" || value === "BOL.") {
     return false;
   }
@@ -78,7 +81,6 @@ function isPagamentoAtrasado(value: string | number, parcelaMes: number): boolea
 
   return true;
 }
-
 
 async function recalculateStatuses() {
   console.log("🔄 Running daily status recalculation...");
@@ -104,17 +106,13 @@ async function recalculateStatuses() {
       }
     }
 
-    aluno.status = atrasado
-      ? "Pagamento atrasado"
-      : "Pagamento em dia";
+    aluno.status = atrasado ? "Pagamento atrasado" : "Pagamento em dia";
   });
 
   await saveDB(db);
 
   console.log("✅ Daily status recalculation finished.");
 }
-
-
 
 async function ensureDBExists() {
   await fs.mkdir(DATA_DIR, { recursive: true });
@@ -127,7 +125,6 @@ async function ensureDBExists() {
 }
 
 let dbQueue = Promise.resolve<any>(null);
-
 
 export async function reportTemplate(
   fornecedor: string,
@@ -236,7 +233,6 @@ function loadDB() {
   return dbQueue;
 }
 
-
 function saveDB(db: any) {
   dbQueue = dbQueue.then(async () => {
     await ensureDBExists();
@@ -323,25 +319,23 @@ app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
   }
 });
 
-
 app.put("/api/sync-status", async (req: Request, res: Response) => {
-    const { alunos } = req.body
+  const { alunos } = req.body;
 
-    const db = await loadDB()
+  const db = await loadDB();
 
-    alunos.forEach((updatedAluno: { id: number, status: string }) => {
-        const aluno = db.alunos.find((a:aluno) => a.id === updatedAluno.id)
+  alunos.forEach((updatedAluno: { id: number; status: string }) => {
+    const aluno = db.alunos.find((a: aluno) => a.id === updatedAluno.id);
 
-        if (aluno) {
-            aluno.status = updatedAluno.status
-        }
-    })
+    if (aluno) {
+      aluno.status = updatedAluno.status;
+    }
+  });
 
-    await saveDB(db)
+  await saveDB(db);
 
-    res.json(db.alunos)
-})
-
+  res.json(db.alunos);
+});
 
 app.get("/api/getproducts", async (req: Request, res: Response) => {
   const db = await loadDB();
@@ -361,6 +355,23 @@ app.get("/api/getpagamentos", async (req: Request, res: Response) => {
 app.get("/api/getescolas", async (req: Request, res: Response) => {
   const db = await loadDB();
   return res.json(db.escolas);
+});
+
+app.post("/api/login", async (req: Request, res: Response) => {
+  const db = await loadDB();
+  const auth = db.login;
+  const user = req.body.user;
+  const pw = req.body.password;
+
+  if (!user || !pw)
+    return res.status(400).json({ error: "Usuário e/ou senha não fornecidos" });
+
+  if (user != auth.user)
+    return res.status(400).json({ error: "Usuário inválido" });
+  else if (pw != auth.pw)
+    return res.status(400).json({ error: "Senha inválida" });
+  else
+    return res.sendStatus(200)
 });
 
 app.post("/api/newproduct", async (req: Request, res: Response) => {
@@ -522,7 +533,7 @@ app.put("/api/editaluno/:id", async (req: Request, res: Response) => {
       }
     }
   } else if (from === "pagamento") aluno.status = status;
-  else if (from === "baixaAnotacao")aluno.anotacoes = anotacoes;
+  else if (from === "baixaAnotacao") aluno.anotacoes = anotacoes;
 
   await saveDB(db);
 
@@ -587,11 +598,11 @@ cron.schedule(
   },
   {
     timezone: "America/Sao_Paulo",
-  }
+  },
 );
 
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-}); 
+});

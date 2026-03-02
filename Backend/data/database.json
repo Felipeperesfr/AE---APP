@@ -1,4 +1,8 @@
 {
+  "login": {
+    "user": "Admin",
+    "pw": "193jku!@ç1"
+  },
   "escolas": [
     {
       "nome": "Ederlindo",
