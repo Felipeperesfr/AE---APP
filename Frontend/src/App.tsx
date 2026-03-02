@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify"
+import { useLocation } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 // PAGES
 import Home from "./pages/Home"
@@ -43,8 +44,8 @@ function App() {
 
 
   // Constantes
-
-  const isLoginPage = window.location.pathname === "/login";
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/login";
 
   // Variávies
 
