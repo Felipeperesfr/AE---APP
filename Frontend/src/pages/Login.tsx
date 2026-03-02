@@ -25,15 +25,16 @@ export default function Login() {
             headers: { "Content-Type": "application/json", },
             body: JSON.stringify({ user: userValue, password: pwValue }),
         })
-        if (response.ok)
+        if (response.ok) {
             toast.success("Login efetuado com sucesso")
+            login();
+            navigate("/");
+        }
         else {
             const data = await response.json(); // 👈 parse body
             toast.error(`Erro: ${data.error}`)
         }
 
-        login();
-        navigate("/");
     };
 
     return (
