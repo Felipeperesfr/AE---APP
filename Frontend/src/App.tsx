@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Home from "./pages/Home"
 import Checklist from "./pages/Checklist"
 import ListaCompras from "./pages/ListaCompras"
-import ConfigGerais from "./pages/ConfigsGerais"
+//import ConfigGerais from "./pages/ConfigsGerais"
 import GestãoFormandos from "./pages/GestãoFormandos"
 import LoginPage from "./pages/Login"
 // CSS PAGES
@@ -70,7 +70,6 @@ function App() {
 
           <Route element={<ProtectedRoute><Checklist /></ProtectedRoute>} path="/checklist" />
 
-          <Route element={<ProtectedRoute><ConfigGerais /></ProtectedRoute>} path="/configs" />
         </Routes>
       </main>
     </div>

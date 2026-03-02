@@ -1,4 +1,5 @@
 
+/* 
 import ModernIcon from "../components/ModernIcon";
 import React, { useState, useEffect, useMemo } from "react";
 import { faSchool, faFilterCircleXmark, faClose, faPenToSquare, faTrash, faPlusCircle, faFilter, faReceipt, faDatabase, IconDefinition } from "@fortawesome/free-solid-svg-icons";
@@ -33,12 +34,12 @@ export default function ConfigsGerais() {
   // Constantes useState
 
   const [subpage, setSubpage] = useState<Subpage>("escolas-config")
-  const [escolas, setEscolas] = useState<escola[]>([])
+  //const [escolas, setEscolas] = useState<escola[]>([])
 
   // Constantes
 
-  const { open: openWarn, confirm: confirmWarn, handleResolve: handleResolveWarn } = useConfirm()
-  const { open: openDelete, confirm: confirmDelete, handleResolve: handleResolveDelete } = useConfirm()
+  //const { open: openWarn, confirm: confirmWarn, handleResolve: handleResolveWarn } = useConfirm()
+  //const { open: openDelete, confirm: confirmDelete, handleResolve: handleResolveDelete } = useConfirm()
 
   const subpages = {
     "escolas-config" : {
@@ -93,3 +94,4 @@ export default function ConfigsGerais() {
     </div>
   )
 }
+*/
