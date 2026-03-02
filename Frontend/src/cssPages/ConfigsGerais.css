@@ -18,7 +18,7 @@
 
 .configs-main-container .bar-selection
 {
-    width: 150px;
+    width: 75px;
     height: 55px;
     display: flex;
     background-color: rgb(255, 255, 255);
@@ -33,3 +33,81 @@
     box-shadow: 0px 5px 8px rgba(142, 142, 142, 0.2);
 }
 
+
+.configs-main-container .content .bar-selection .bar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    font-size: 40px;
+    padding: 5px 0 5px 0;
+}
+
+
+.configs-main-container .escolas-config
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.escolas-config .header
+{
+    display: flex;
+    justify-content: space-between;
+    border-bottom: dashed 1px rgb(195, 195, 195);
+}
+
+.escolas-config .header h2
+{
+    margin: 5px 0px 0px 5px;
+    font-size: 25px;
+}
+
+.escolas-config .add-school-icon{
+    margin-right: 17px;
+}
+
+.escolas-config .add-school-icon:hover{
+    color: rgb(227, 197, 27);
+    cursor: pointer;
+}
+   
+
+.escolas-config .add-school-icon
+{
+    display: flex;
+    align-items: center;
+    font-size: 25px;
+}
+
+
+.escolas-config .lista-escolas
+{
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    margin: 5px 10px 10px 10px;
+    padding: 0;
+}
+
+.escolas-config .lista-escolas li{
+    list-style: none;
+    display: flex;
+    font-size: 20px;
+}
+
+.escolas-config .lista-escolas .nome{
+    width: 230px;
+}
+
+.escolas-config .lista-escolas .icon:hover{
+    color: rgb(227, 197, 27);
+    cursor: pointer;
+}
+
+.escolas-config .body .input
+{
+    margin-top: 10px;
+    display: flex;
+}

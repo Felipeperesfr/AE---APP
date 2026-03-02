@@ -319,10 +319,6 @@ export default function GestãoFormandos() {
     }, [alunos, atrasoPorAluno])
 
 
-
-
-
-
     useEffect(() => {
         const loadData = async () => {
             const [alunosRes, escolasRes, pagamentoRes] = await Promise.all([
@@ -721,7 +717,7 @@ export default function GestãoFormandos() {
                                                                                 </span>
                                                                                     <div className="status">
                                                                                         <h2>Status</h2>
-                                                                                        <span>{a.status}</span>
+                                                                                        <span style={{color: a.status === "Cancelado" ? "red" : "auto"}}>{a.status}</span>
                                                                                     </div>
                                                                                     <div className="anotacoes">
                                                                                         <h2>Anotações</h2>

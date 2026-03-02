@@ -383,6 +383,25 @@ app.post("/api/newproduct", async (req: Request, res: Response) => {
   return res.status(201).send(newProduct);
 });
 
+app.post("/api/newescola", async (req: Request, res: Response) => {
+  const db = await loadDB();
+  const nome = req.body.nome;
+
+  if (!nome === undefined) {
+    return res.status(400).json({ error: "Nome é obrigatório" });
+  }
+
+  const newEscola = {
+    id: Date.now(),
+    ...req.body,
+  };
+
+  db.escolas.push(newEscola);
+  await saveDB(db);
+
+  return res.status(201).send(db.escolas);
+});
+
 app.post("/api/newaluno", async (req: Request, res: Response) => {
   const db = await loadDB();
   const nome = req.body.nome;
