@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 import archiver from "archiver";
 import cors from "cors";
 import path from "path";
@@ -276,11 +277,8 @@ app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
     const peopleQuantity = req.body.peopleQuantity;
 
     browser = await puppeteer.launch({
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage"
-      ],
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
       headless: true,
     });
 
@@ -291,7 +289,10 @@ app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
       const archive = archiver("zip", { zlib: { level: 9 } });
 
       res.setHeader("Content-Type", "application/zip");
-      res.setHeader("Content-Disposition", "attachment; filename=relatorios.zip");
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=relatorios.zip",
+      );
 
       archive.on("error", (err) => {
         console.error("🔥 ARCHIVE ERROR:", err);
@@ -346,7 +347,6 @@ app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
     res.setHeader("Content-Length", pdfBuffer.length.toString());
 
     return res.end(pdfBuffer);
-
   } catch (err) {
     console.error("🔥 PDF ERROR:", err);
 
@@ -356,7 +356,6 @@ app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
         details: err instanceof Error ? err.message : err,
       });
     }
-
   } finally {
     if (browser) {
       try {
