@@ -269,56 +269,69 @@ function saveDB(db: any) {
 }
 
 app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
-  const fornecedor = req.body.fornecedor;
-  const peopleQuantity = req.body.peopleQuantity;
-  const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    headless: true,
-  });
+  let browser;
 
-  if (fornecedor === "Todos Fornecedores") {
-    const fornecedores: string[] = req.body.fornecedores;
-    const archive = archiver("zip", { zlib: { level: 9 } });
-    res.status(200);
-    res.setHeader("Content-Type", "application/zip");
-    res.setHeader("Content-Disposition", "attachment; filename=relatorios.zip");
+  try {
+    const fornecedor = req.body.fornecedor;
+    const peopleQuantity = req.body.peopleQuantity;
 
-    archive.on("error", (err) => {
-      console.error(err);
-      res.status(500).end();
+    browser = await puppeteer.launch({
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      headless: true,
     });
 
-    archive.pipe(res);
+    // 🔽 MULTIPLE PDFs (ZIP)
+    if (fornecedor === "Todos Fornecedores") {
+      const fornecedores: string[] = req.body.fornecedores;
 
-    for (const f of fornecedores) {
-      const html = await reportTemplate(f, peopleQuantity);
-      const page = await browser.newPage();
+      const archive = archiver("zip", { zlib: { level: 9 } });
 
-      await page.setContent(html, {
-        waitUntil: "networkidle0",
+      res.setHeader("Content-Type", "application/zip");
+      res.setHeader("Content-Disposition", "attachment; filename=relatorios.zip");
+
+      archive.on("error", (err) => {
+        console.error("🔥 ARCHIVE ERROR:", err);
+        if (!res.headersSent) {
+          res.status(500).end();
+        }
       });
 
-      const pdfBuffer = await page.pdf({
-        format: "A4",
-        printBackground: true,
-      });
+      archive.pipe(res);
 
-      await page.close();
+      for (const f of fornecedores) {
+        const html = await reportTemplate(f, peopleQuantity);
+        const page = await browser.newPage();
 
-      archive.append(Buffer.from(pdfBuffer), {
-        name: `${f}.pdf`,
-      });
+        await page.setContent(html, {
+          waitUntil: "domcontentloaded", // ✅ safer than networkidle0
+        });
+
+        const pdfBuffer = await page.pdf({
+          format: "A4",
+          printBackground: true,
+        });
+
+        await page.close();
+
+        archive.append(pdfBuffer, {
+          name: `${f}.pdf`,
+        });
+      }
+
+      await archive.finalize();
+      return;
     }
 
-    await browser.close();
-    await archive.finalize();
-    return;
-  } else {
+    // 🔽 SINGLE PDF
     const html = await reportTemplate(fornecedor, peopleQuantity);
     const page = await browser.newPage();
 
     await page.setContent(html, {
-      waitUntil: "networkidle0",
+      waitUntil: "domcontentloaded", // ✅ safer
     });
 
     const pdfBuffer = await page.pdf({
@@ -326,14 +339,32 @@ app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
       printBackground: true,
     });
 
-    await browser.close();
+    await page.close();
 
-    res
-      .status(200)
-      .setHeader("Content-Type", "application/pdf")
-      .setHeader("Content-Disposition", "inline; filename=report.pdf")
-      .setHeader("Content-Length", pdfBuffer.length)
-      .end(pdfBuffer);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "inline; filename=report.pdf");
+    res.setHeader("Content-Length", pdfBuffer.length.toString());
+
+    return res.end(pdfBuffer);
+
+  } catch (err) {
+    console.error("🔥 PDF ERROR:", err);
+
+    if (!res.headersSent) {
+      return res.status(500).json({
+        error: "Erro ao gerar PDF",
+        details: err instanceof Error ? err.message : err,
+      });
+    }
+
+  } finally {
+    if (browser) {
+      try {
+        await browser.close();
+      } catch (e) {
+        console.error("Erro ao fechar browser:", e);
+      }
+    }
   }
 });
 
