@@ -73,6 +73,7 @@ function isPagamentoAtrasado(
   const day = now.getDate();
   const month = now.getMonth() + 1;
 
+
   if (month < parcelaMes) return false;
 
   if (month === parcelaMes) {
@@ -82,11 +83,34 @@ function isPagamentoAtrasado(
   return true;
 }
 
-async function recalculateStatuses() {
-  console.log("🔄 Running daily status recalculation...");
+async function recalculateStatus(pagamento: pagamentos, db: any) {
+  
+  const aluno = db.alunos.find((a: aluno) => a.id === pagamento.id);
+  if (!aluno) return;
 
-  const db = await loadDB();
+  if (aluno.status === "Cancelado") return;
 
+  let atrasado = false;
+;
+
+  for (const [key, value] of Object.entries(pagamento)) {
+    if (key === "id") continue;
+
+    const parcelaMes = Number(key.slice(1)) + 3;
+
+
+
+    if (isPagamentoAtrasado(value as string, parcelaMes)) {
+      atrasado = true;
+      break;
+    }
+  }
+
+  aluno.status = atrasado ? "Pagamento atrasado" : "Pagamento em dia";
+
+}
+
+async function recalculateStatuses(db: any) {
   db.pagamentos.forEach((pagamento: pagamentos) => {
     const aluno = db.alunos.find((a: aluno) => a.id === pagamento.id);
     if (!aluno) return;
@@ -98,7 +122,7 @@ async function recalculateStatuses() {
     for (const [key, value] of Object.entries(pagamento)) {
       if (key === "id") continue;
 
-      const parcelaMes = Number(key.slice(1));
+      const parcelaMes = Number(key.slice(1)) + 3;
 
       if (isPagamentoAtrasado(value as string, parcelaMes)) {
         atrasado = true;
@@ -110,8 +134,6 @@ async function recalculateStatuses() {
   });
 
   await saveDB(db);
-
-  console.log("✅ Daily status recalculation finished.");
 }
 
 async function ensureDBExists() {
@@ -235,6 +257,7 @@ function loadDB() {
 
 function saveDB(db: any) {
   dbQueue = dbQueue.then(async () => {
+
     await ensureDBExists();
 
     const json = JSON.stringify(db, null, 2);
@@ -319,23 +342,6 @@ app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
   }
 });
 
-app.put("/api/sync-status", async (req: Request, res: Response) => {
-  const { alunos } = req.body;
-
-  const db = await loadDB();
-
-  alunos.forEach((updatedAluno: { id: number; status: string }) => {
-    const aluno = db.alunos.find((a: aluno) => a.id === updatedAluno.id);
-
-    if (aluno) {
-      aluno.status = updatedAluno.status;
-    }
-  });
-
-  await saveDB(db);
-
-  res.json(db.alunos);
-});
 
 app.get("/api/getproducts", async (req: Request, res: Response) => {
   const db = await loadDB();
@@ -370,8 +376,7 @@ app.post("/api/login", async (req: Request, res: Response) => {
     return res.status(400).json({ error: "Usuário inválido" });
   else if (pw != auth.pw)
     return res.status(400).json({ error: "Senha inválida" });
-  else
-    return res.sendStatus(200)
+  else return res.sendStatus(200);
 });
 
 app.post("/api/newproduct", async (req: Request, res: Response) => {
@@ -557,6 +562,8 @@ app.put("/api/editpagamento/:id", async (req: Request, res: Response) => {
 
   pagamento[parcelaEdit] = valorParcela;
 
+  await recalculateStatus(pagamento, db);
+
   await saveDB(db);
 
   return res.sendStatus(200);
@@ -594,7 +601,8 @@ app.put("/api/editproduct/:id", async (req: Request, res: Response) => {
 cron.schedule(
   "0 0 * * *",
   async () => {
-    await recalculateStatuses();
+    const db = await loadDB();
+    await recalculateStatuses(db);
   },
   {
     timezone: "America/Sao_Paulo",

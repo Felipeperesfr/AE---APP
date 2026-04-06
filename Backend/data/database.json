@@ -82,7 +82,7 @@
       "tel2": "",
       "ano": "3º",
       "turma": "TRD",
-      "status": "Pagamento atrasado",
+      "status": "Pagamento em dia",
       "valor": 197,
       "metodo": "PIX",
       "parcelas": 6
@@ -95,7 +95,7 @@
       "tel2": "34996368620",
       "ano": "5º",
       "turma": "A",
-      "status": "Pagamento em dia",
+      "status": "Pagamento atrasado",
       "parcelas": 8,
       "valor": 120,
       "metodo": "PIX",
@@ -122,7 +122,7 @@
       "tel2": "",
       "ano": "5º",
       "turma": "B",
-      "status": "Pagamento atrasado",
+      "status": "Pagamento em dia",
       "parcelas": 1,
       "valor": 80,
       "metodo": "CC"
@@ -136,7 +136,7 @@
       "ano": "3º",
       "turma": "2",
       "anotacoes": "",
-      "status": "Pagamento atrasado",
+      "status": "Pagamento em dia",
       "parcelas": 8,
       "valor": 197,
       "metodo": "PIX"
@@ -179,19 +179,19 @@
     },
     {
       "id": 1770120050712,
-      "p1": "PIX",
+      "p1": "CC",
       "p2": "PIX",
       "p3": "",
       "p4": ""
     },
     {
       "id": 1770121068786,
-      "p1": ""
+      "p1": "PIX"
     },
     {
       "id": 1770122086750,
-      "p1": "",
-      "p2": "",
+      "p1": "CC",
+      "p2": "PIX",
       "p3": "",
       "p4": "",
       "p5": "",
@@ -201,7 +201,7 @@
     },
     {
       "id": 1770294044398,
-      "p1": "",
+      "p1": "PIX",
       "p2": "",
       "p3": "",
       "p4": ""

@@ -36,8 +36,8 @@ export default function ParcelaPagamento({
 
     useEffect(() => {
         const parcelaActions: Record<string, () => void> = {
-            "p1": () => evaluateP(1),
-            "p2": () => evaluateP(2),
+            "p1": () => evaluateP(4),
+            "p2": () => evaluateP(5),
             "p3": () => evaluateP(6),
             "p4": () => evaluateP(7),
             "p5": () => evaluateP(8),

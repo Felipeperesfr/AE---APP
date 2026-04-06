@@ -219,7 +219,7 @@ export default function GestãoFormandos() {
 
             for (const [key, value] of Object.entries(p)) {
                 if (key === "id") continue
-                const m = Number(key.slice(1))
+                const m = Number(key.slice(1)) + 3
                 if (isPagamentoAtrasado(value, m)) {
                     atrasado = true
                     break
@@ -293,30 +293,6 @@ export default function GestãoFormandos() {
             setFilterIcon(faFilterCircleXmark)
     }, [filteredAlunos.length, alunos.length])
 
-    useEffect(() => {
-        if (alunos.length === 0) return
-
-        const alunosAtualizados = alunos.map(aluno => {
-            const isAtrasado = atrasoPorAluno.get(aluno.id) ?? false
-
-            const novoStatus = isAtrasado
-                ? "Pagamento atrasado"
-                : "Pagamento em dia"
-
-            return {
-                id: aluno.id,
-                status: novoStatus
-            }
-        })
-
-        fetch(`${process.env.REACT_APP_API_URL}/sync-status`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ alunos: alunosAtualizados })
-        })
-            .catch(() => toast.error("Erro ao sincronizar status"))
-
-    }, [alunos, atrasoPorAluno])
 
 
     useEffect(() => {
