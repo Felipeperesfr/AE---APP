@@ -6,6 +6,15 @@
     align-items: center;
 }
 
+.listacompras-main-container .content p{
+    width: auto;
+}
+
+.listacompras-main-container .content input{
+    padding-left: 0;
+}
+
+
 .listacompras-main-container .content
 {
     margin-top: 40px;
