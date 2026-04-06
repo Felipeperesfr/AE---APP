@@ -73,7 +73,6 @@ function isPagamentoAtrasado(
   const day = now.getDate();
   const month = now.getMonth() + 1;
 
-
   if (month < parcelaMes) return false;
 
   if (month === parcelaMes) {
@@ -84,21 +83,16 @@ function isPagamentoAtrasado(
 }
 
 async function recalculateStatus(pagamento: pagamentos, db: any) {
-  
   const aluno = db.alunos.find((a: aluno) => a.id === pagamento.id);
   if (!aluno) return;
 
   if (aluno.status === "Cancelado") return;
 
   let atrasado = false;
-;
-
   for (const [key, value] of Object.entries(pagamento)) {
     if (key === "id") continue;
 
     const parcelaMes = Number(key.slice(1)) + 3;
-
-
 
     if (isPagamentoAtrasado(value as string, parcelaMes)) {
       atrasado = true;
@@ -107,7 +101,6 @@ async function recalculateStatus(pagamento: pagamentos, db: any) {
   }
 
   aluno.status = atrasado ? "Pagamento atrasado" : "Pagamento em dia";
-
 }
 
 async function recalculateStatuses(db: any) {
@@ -257,7 +250,6 @@ function loadDB() {
 
 function saveDB(db: any) {
   dbQueue = dbQueue.then(async () => {
-
     await ensureDBExists();
 
     const json = JSON.stringify(db, null, 2);
@@ -279,7 +271,10 @@ function saveDB(db: any) {
 app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
   const fornecedor = req.body.fornecedor;
   const peopleQuantity = req.body.peopleQuantity;
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    headless: true,
+  });
 
   if (fornecedor === "Todos Fornecedores") {
     const fornecedores: string[] = req.body.fornecedores;
@@ -341,7 +336,6 @@ app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
       .end(pdfBuffer);
   }
 });
-
 
 app.get("/api/getproducts", async (req: Request, res: Response) => {
   const db = await loadDB();
