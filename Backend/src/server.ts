@@ -318,7 +318,7 @@ app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
 
         await page.close();
 
-        archive.append(pdfBuffer, {
+        archive.append(Buffer.from(pdfBuffer), {
           name: `${f}.pdf`,
         });
       }
@@ -376,6 +376,7 @@ app.get("/api/getalunos", async (req: Request, res: Response) => {
   const db = await loadDB();
   return res.json(db.alunos);
 });
+
 
 app.get("/api/getpagamentos", async (req: Request, res: Response) => {
   const db = await loadDB();
@@ -637,4 +638,19 @@ const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+
+
+
+
+// BI API
+
+app.get("/api/bi/getalunos", async (req: Request, res: Response) => {
+  const db = await loadDB();
+  return res.json(db.alunos);
+});
+
+app.get("/api/bi/getpagamentos", async (req: Request, res: Response) => {
+  const db = await loadDB();
+  return res.json(db.pagamentos);
 });
