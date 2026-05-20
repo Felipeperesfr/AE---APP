@@ -20,6 +20,7 @@ export default function Login() {
 
     // Funções Gerais
     const handleLogin = async () => {
+        console.log(`${process.env.REACT_APP_API_URL}/api/login`)
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json", },
