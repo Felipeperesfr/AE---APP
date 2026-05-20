@@ -8,7 +8,7 @@ const isDev = window.location.hostname === "localhost";
 export default function ProtectedRoute({ children }: { children: JSX.Element }) {
   const { isAuthenticated } = useAuth();
 
-  //if (isDev) return children;
+  if (isDev) return children;
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
