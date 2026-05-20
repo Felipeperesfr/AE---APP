@@ -5,7 +5,12 @@ import archiver from "archiver";
 import cors from "cors";
 import path from "path";
 import fs from "fs/promises";
+import fsSync from "fs";
 import cron from "node-cron";
+import axios from "axios";
+import multer from "multer";
+import csv from "csv-parser";
+import { v4 as uuid } from "uuid";
 
 const app = express();
 app.use(express.json());
@@ -14,17 +19,20 @@ app.use(cors());
 const dbPath = path.join(process.cwd(), "data", "database.json");
 const TMP_PATH = path.join(process.cwd(), "data", "database.tmp.json");
 const DATA_DIR = path.join(process.cwd(), "data");
+const TENANT_ID = "03d2f93d-c2fa-40e9-9760-63b25ce264dd";
+const CLIENT_ID = "21b125b4-781b-4e45-9f26-4a71e99a502c";
+const CLIENT_SECRET = "0f08Q~patCimdBicIukLFMMg80sJq30QuN_mnbEy";
 
 type produto = {
   nome: String;
   unidade: String;
   fornecedor: String;
   valor: number;
-  id: number;
+  id: string;
 };
 
 type pagamentos = {
-  id: number;
+  id: string;
   p1: string;
   p2?: string;
   p3?: string;
@@ -41,7 +49,7 @@ type escola = {
 };
 
 type aluno = {
-  id: number;
+  id: string;
   nome: string;
   escola: string;
   tel1: string;
@@ -229,7 +237,7 @@ export async function reportTemplate(
   `;
 }
 
-function buildPagamentos(id: number, parcelas: number): pagamentos {
+function buildPagamentos(id: string, parcelas: number): pagamentos {
   const pagamento: pagamentos = { id, p1: "" };
 
   for (let i = 2; i <= parcelas && i <= 8; i++) {
@@ -377,7 +385,6 @@ app.get("/api/getalunos", async (req: Request, res: Response) => {
   return res.json(db.alunos);
 });
 
-
 app.get("/api/getpagamentos", async (req: Request, res: Response) => {
   const db = await loadDB();
   return res.json(db.pagamentos);
@@ -448,7 +455,7 @@ app.post("/api/newaluno", async (req: Request, res: Response) => {
   const nome = req.body.nome;
   const escola = req.body.escola;
   const parcelas = req.body.parcelas;
-  const id = Date.now();
+  const id = uuid();
 
   if (!nome || !escola) {
     return res.status(400).json({ error: "Nome e/ou escola inválidas" });
@@ -470,9 +477,9 @@ app.post("/api/newaluno", async (req: Request, res: Response) => {
 
 app.delete("/api/deleteproduct/:id", async (req: Request, res: Response) => {
   const db = await loadDB();
-  const id = Number(req.params.id);
+  const id = req.params.id;
 
-  if (isNaN(id)) {
+  if (!id) {
     return res.status(400).json({ error: "ID inválido" });
   }
 
@@ -490,9 +497,9 @@ app.delete("/api/deleteproduct/:id", async (req: Request, res: Response) => {
 
 app.delete("/api/deletealuno/:id", async (req: Request, res: Response) => {
   const db = await loadDB();
-  const id = Number(req.params.id);
+  const id = req.params.id;
 
-  if (isNaN(id)) {
+  if (!id) {
     return res.status(400).json({ error: "ID inválido" });
   }
 
@@ -524,7 +531,7 @@ app.put("/api/editaluno/:id", async (req: Request, res: Response) => {
   const parcelas = Number(req.body.parcelas);
   const valor = Number(req.body.valor);
   const metodo = req.body.metodo;
-  const id = Number(req.params.id);
+  const id = req.params.id as string;
   const from = req.query.from;
 
   if (!from) {
@@ -571,7 +578,7 @@ app.put("/api/editaluno/:id", async (req: Request, res: Response) => {
 });
 
 app.put("/api/editpagamento/:id", async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
+  const id = req.params.id;
   const parcelaEdit = req.body.parcelaEdit;
   const valorParcela = req.body.valorParcela;
   const db = await loadDB();
@@ -599,7 +606,7 @@ app.put("/api/editproduct/:id", async (req: Request, res: Response) => {
   const valor = req.body.valor;
   const unidade = req.body.unidade;
   const fornecedor = req.body.fornecedor;
-  const id = Number(req.params.id);
+  const id = req.params.id;
 
   if (!nome || valor === undefined) {
     return res.status(400).json({ error: "Nome e Mult. são obrigatórios" });
@@ -623,6 +630,89 @@ app.put("/api/editproduct/:id", async (req: Request, res: Response) => {
   return res.status(200).json(db.products);
 });
 
+const upload = multer({
+  dest: "uploads/",
+});
+
+app.post("/api/getcsv", upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({
+      error: "Arquivo não enviado",
+    });
+  }
+
+  const alunos: aluno[] = [];
+  const pagamentos: pagamentos[] = [];
+
+  fsSync
+    .createReadStream(req.file.path)
+    .pipe(csv())
+    .on("data", (row) => {
+      const id = `${row.nome}-${row.escola}-${row.tel1}`;
+      const aluno: aluno = {
+        id: id,
+        nome: row.nome,
+        escola: row.escola,
+        tel1: row.tel1,
+        tel2: row.tel2,
+        qntParcelas: row.parcelas,
+        valorParcelas: row.valorparcela,
+        ano: row.ano,
+        turma: row.turma,
+        anotações: row.anotações,
+        status: "Importado",
+        metodo: "",
+      };
+      const pagamento: pagamentos = {
+        id: id,
+        p1: row.PG1,
+        p2: row.PG2,
+        p3: row.PG3,
+        p4: row.PG4,
+        p5: row.PG5,
+        p6: row.PG6,
+        p7: row.PG7,
+        p8: row.PG8 
+      };
+      alunos.push(aluno);
+      pagamentos.push(pagamento);
+    })
+    .on("end", () => {
+      const banco = JSON.parse(
+        fsSync.readFileSync("data/database.json", "utf-8"),
+      );
+
+      for (const alunoImportado of alunos) {
+        const index = banco.alunos.findIndex(
+          (a: aluno) => a.id === alunoImportado.id,
+        );
+
+        if (index !== -1) {
+          // UPDATE
+          //banco.alunos[index] = alunoImportado;
+          banco.pagamentos[index] = pagamentos.find((p:pagamentos) => p.id === alunoImportado.id)
+        } else {
+          // INSERT
+          banco.alunos.push(alunoImportado);
+          banco.pagamentos.push(pagamentos.find((p:pagamentos) => p.id === alunoImportado.id))
+        }
+      }
+
+      // Salva novamente
+      fsSync.writeFileSync(
+        "data/database.json",
+        JSON.stringify(banco, null, 2),
+      );
+
+      // Remove CSV temporário
+      fsSync.unlinkSync(req.file!.path);
+
+      return res.json({
+        sucesso: true,
+        adicionados: alunos.length,
+      });
+    });
+});
 cron.schedule(
   "0 0 * * *",
   async () => {
@@ -640,9 +730,6 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-
-
-
 // BI API
 
 app.get("/api/bi/getalunos", async (req: Request, res: Response) => {
@@ -654,3 +741,46 @@ app.get("/api/bi/getpagamentos", async (req: Request, res: Response) => {
   const db = await loadDB();
   return res.json(db.pagamentos);
 });
+
+export async function getPowerBIAccessToken(): Promise<string> {
+  try {
+    const response = await axios.post(
+      `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token`,
+      new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        scope: "https://analysis.windows.net/powerbi/api/.default",
+      }),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      },
+    );
+
+    return response.data.access_token;
+  } catch (error: any) {
+    console.error(
+      "Erro ao obter token Power BI:",
+      error.response?.data || error.message,
+    );
+
+    throw error;
+  }
+}
+
+async function listWorkspaces() {
+  const token = await getPowerBIAccessToken();
+
+  const response = await axios.get(
+    "https://api.powerbi.com/v1.0/myorg/groups",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  console.log(response.data);
+}

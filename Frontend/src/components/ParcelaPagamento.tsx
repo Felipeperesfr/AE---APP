@@ -14,7 +14,7 @@ type ParcelaPagamentoProps = {
     distance?: number,
     nParcela: string,
     onChange: (valor: string) => void,
-    idPagamento: number
+    idPagamento: string
 };
 
 export default function ParcelaPagamento({

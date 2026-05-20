@@ -1,0 +1,3 @@
+Tenant ID: 03d2f93d-c2fa-40e9-9760-63b25ce264dd
+Client ID: 21b125b4-781b-4e45-9f26-4a71e99a502c
+Secret Value: 0f08Q~patCimdBicIukLFMMg80sJq30QuN_mnbEy

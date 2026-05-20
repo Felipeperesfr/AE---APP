@@ -1,5 +1,5 @@
 import ModernIcon from "../components/ModernIcon";
-import React, { useState, useEffect, useMemo} from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { faFilterCircleXmark, faClose, faPenToSquare, faTrash, faPlusCircle, faFilter, faReceipt, faDatabase, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useConfirm } from "../components/UseConfirm"
@@ -46,11 +46,11 @@ export default function GestãoFormandos() {
         anotacoes: string | "",
         status: string, // "Criado" | "Mensagem enviada" | "Pagamento em dia" | "Pagamento atrasado" | "Cancelado"
         metodo: string,
-        id: number
+        id: string
     }
 
     type pagamento = {
-        id: number;
+        id: string;
         p1: string;
         p2?: string;
         p3?: string;
@@ -78,7 +78,7 @@ export default function GestãoFormandos() {
         anotacoes: "",
         status: "Criado",
         metodo: "",
-        id: 0
+        id: ""
     };
 
     const { open: openWarn, confirm: confirmWarn, handleResolve: handleResolveWarn } = useConfirm()
@@ -87,6 +87,8 @@ export default function GestãoFormandos() {
 
 
     // Funções Gerais
+
+
 
     const registerEntry = (aluno: aluno): void => {
         setAlunos(prev => [...prev, aluno]);
@@ -105,8 +107,7 @@ export default function GestãoFormandos() {
     };
 
 
-
-    const sendAnotacoesValue = async (id: number) => {
+    const sendAnotacoesValue = async (id: string) => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/editaluno/${id}?from=baixaAnotacao`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", },
@@ -125,7 +126,7 @@ export default function GestãoFormandos() {
 
     // Funções Requests
 
-    const deleteAluno = async (id: number): Promise<void> => {
+    const deleteAluno = async (id: string): Promise<void> => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/deletealuno/${id}`, {
             method: "DELETE"
         })
@@ -163,6 +164,7 @@ export default function GestãoFormandos() {
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
     const [modalMode, setModalMode] = useState<modalModeType>("add")
     const [modalHeight, setModalHeight] = useState<number>(0)
+    const [modalWidth, setModalWidth] = useState<number>(0)
     const [activeEscola, setActiveEscola] = useState<string | null>(null)
     const [valueAnotacao, setValueAnotacao] = useState<string>("")
 
@@ -188,7 +190,7 @@ export default function GestãoFormandos() {
     }, [filteredAlunos, sortKey, sortDirection]);
 
     const atrasoPorAluno = useMemo(() => {
-        const map = new Map<number, boolean>()
+        const map = new Map<string, boolean>()
 
         pagamentos.forEach(p => {
             let atrasado = false
@@ -370,7 +372,7 @@ export default function GestãoFormandos() {
                 </div>
             </Modal>
 
-            <Modal open={openModalAluno} onClose={() => setopenModalAluno(false)} width={"450px"} height={modalHeight}>
+            <Modal open={openModalAluno} onClose={() => setopenModalAluno(false)} width={modalWidth} height={modalHeight}>
                 <header>
                     <div />
                     <h1>
@@ -438,7 +440,7 @@ export default function GestãoFormandos() {
                                 <input type="text" value={selectedAluno.valor} onChange={(e) => { setSelectedAluno(prev => ({ ...prev!, valor: e.target.value })) }} />
                             </div>
                             <div className="input">
-                                <p>Método PG.:</p>
+                                <p>Método:</p>
                                 <select name="Método select" value={selectedAluno.metodo} onChange={(e) => { setSelectedAluno(prev => ({ ...prev!, metodo: e.target.value })) }}>
                                     <option value=""></option>
                                     <option value="PIX">PIX</option>
@@ -562,7 +564,7 @@ export default function GestãoFormandos() {
                                 <input type="text" value={selectedAluno.valor} onChange={(e) => { setSelectedAluno(prev => ({ ...prev!, valor: e.target.value })) }} />
                             </div>
                             <div className="input">
-                                <p>Método PG.:</p>
+                                <p>Método:</p>
                                 <select name="Método select" value={selectedAluno.metodo} onChange={(e) => { setSelectedAluno(prev => ({ ...prev!, metodo: e.target.value })) }}>
                                     <option value=""></option>
                                     <option value="PIX">PIX</option>
@@ -693,7 +695,7 @@ export default function GestãoFormandos() {
                                                                                 </span>
                                                                                     <div className="status">
                                                                                         <h2>Status</h2>
-                                                                                        <span style={{color: a.status === "Cancelado" ? "red" : "auto"}}>{a.status}</span>
+                                                                                        <span style={{ color: a.status === "Cancelado" ? "red" : "auto" }}>{a.status}</span>
                                                                                     </div>
                                                                                     <div className="anotacoes">
                                                                                         <h2>Anotações</h2>
@@ -747,7 +749,7 @@ export default function GestãoFormandos() {
                                     <h2 className="menor-espaço">Método</h2>
                                     <h2 className="maior-espaço">Status</h2>
                                     <h2 className="maior-espaço">Anotações</h2>
-                                    <div className="add-icon"><span onClick={() => { setModalHeight(505); setModalMode("add"); setopenModalAluno(true); setSelectedAluno(EMPTY_ALUNO) }}><ModernIcon direction="vertical-down" icon={faPlusCircle} text="Adicionar Aluno"></ModernIcon></span></div>
+                                    <div className="add-icon"><span onClick={() => { setModalWidth(450); setModalHeight(525); setModalMode("add"); setopenModalAluno(true); setSelectedAluno(EMPTY_ALUNO) }}><ModernIcon direction="vertical-down" icon={faPlusCircle} text="Adicionar Aluno"></ModernIcon></span></div>
                                 </div>
                                 <ul>
                                     {sortedAlunos.map(a => (
@@ -779,6 +781,7 @@ export default function GestãoFormandos() {
                                                     else
                                                         toast.error(`Erro: ${response.statusText}`)
                                                 }}>
+                                                    <option value="Criado">Importado</option>
                                                     <option value="Criado">Criado</option>
                                                     <option value="Mensagem enviada">Mensagem enviada</option>
                                                     <option value="Pagamento em dia">Pagamento em dia</option>
@@ -786,7 +789,7 @@ export default function GestãoFormandos() {
                                                     <option value="Cancelado">Cancelado</option>
                                                 </select></span>
                                                 <span className="maior-espaço">{a.anotacoes}</span>
-                                                <div className="icones"><span className="modernIcon" onClick={() => { setModalHeight(535); setModalMode("edit"); setSelectedAluno(a); setopenModalAluno(true) }}><ModernIcon distance={40} direction="horizontal-left" icon={faPenToSquare} text="Editar"></ModernIcon></span>
+                                                <div className="icones"><span className="modernIcon" onClick={() => { setModalHeight(565); setModalMode("edit"); setSelectedAluno(a); setopenModalAluno(true) }}><ModernIcon distance={40} direction="horizontal-left" icon={faPenToSquare} text="Editar"></ModernIcon></span>
                                                     <span onClick={async () => { setSelectedAluno(a); const userReturn = await confirmDelete(); if (userReturn) deleteAluno(a.id) }} className="modernIcon"><ModernIcon direction="horizontal-right" icon={faTrash} text="Excluir"></ModernIcon></span></div>
                                             </div>
                                         </li>
