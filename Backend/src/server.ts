@@ -16,12 +16,16 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+
 const dbPath = path.join(process.cwd(), "data", "database.json");
 const TMP_PATH = path.join(process.cwd(), "data", "database.tmp.json");
 const DATA_DIR = path.join(process.cwd(), "data");
-const TENANT_ID = "03d2f93d-c2fa-40e9-9760-63b25ce264dd";
-const CLIENT_ID = "21b125b4-781b-4e45-9f26-4a71e99a502c";
-const CLIENT_SECRET = "0f08Q~patCimdBicIukLFMMg80sJq30QuN_mnbEy";
+
+
+const TENANT_ID = process.env.POWERBI_TENANT_ID;
+const CLIENT_ID = process.env.POWERBI_CLIENT_ID;
+const CLIENT_SECRET = process.env.POWERBI_CLIENT_SECRET;
+
 
 type produto = {
   nome: String;
@@ -748,8 +752,8 @@ export async function getPowerBIAccessToken(): Promise<string> {
       `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token`,
       new URLSearchParams({
         grant_type: "client_credentials",
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
+        client_id: CLIENT_ID!,
+        client_secret: CLIENT_SECRET!,
         scope: "https://analysis.windows.net/powerbi/api/.default",
       }),
       {
