@@ -16,16 +16,13 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-
 const dbPath = path.join(process.cwd(), "data", "database.json");
 const TMP_PATH = path.join(process.cwd(), "data", "database.tmp.json");
 const DATA_DIR = path.join(process.cwd(), "data");
 
-
 const TENANT_ID = process.env.POWERBI_TENANT_ID;
 const CLIENT_ID = process.env.POWERBI_CLIENT_ID;
 const CLIENT_SECRET = process.env.POWERBI_CLIENT_SECRET;
-
 
 type produto = {
   nome: String;
@@ -647,28 +644,50 @@ app.post("/api/getcsv", upload.single("file"), async (req, res) => {
 
   const alunos: aluno[] = [];
   const pagamentos: pagamentos[] = [];
+  const linhasInvalidas: any[] = [];
+  let linhaAtual = 1;
 
   fsSync
     .createReadStream(req.file.path)
-    .pipe(csv())
+    .pipe(
+      csv({
+        mapHeaders: ({ header }) =>
+          header.replace(/"/g, "").trim().toLowerCase(),
+      }),
+    )
     .on("data", (row) => {
+      // Validação dos campos obrigatórios
+
+      const nomeValido = !!String(row.nome ?? "").trim();
+      const escolaValida = !!String(row.escola ?? "").trim();
+
+
+      linhaAtual++;
+
+      if (!nomeValido || !escolaValida) {
+        linhasInvalidas.push({ linha: linhaAtual, dado: row });
+        return;
+      }
+
       const id = `${row.nome}-${row.escola}-${row.tel1}`;
+
       const aluno: aluno = {
-        id: id,
+        id,
         nome: row.nome,
         escola: row.escola,
         tel1: row.tel1,
-        tel2: row.tel2,
+        tel2: row.tel2 ?? "",
         qntParcelas: row.parcelas,
         valorParcelas: row.valorparcela,
         ano: row.ano,
         turma: row.turma,
-        anotações: row.anotações,
+        anotações: row.anotações ?? "",
         status: "Importado",
         metodo: "",
       };
+
       const pagamento: pagamentos = {
-        id: id,
+        id,
         p1: row.PG1,
         p2: row.PG2,
         p3: row.PG3,
@@ -676,44 +695,84 @@ app.post("/api/getcsv", upload.single("file"), async (req, res) => {
         p5: row.PG5,
         p6: row.PG6,
         p7: row.PG7,
-        p8: row.PG8 
+        p8: row.PG8,
       };
+
       alunos.push(aluno);
       pagamentos.push(pagamento);
     })
     .on("end", () => {
-      const banco = JSON.parse(
-        fsSync.readFileSync("data/database.json", "utf-8"),
-      );
-
-      for (const alunoImportado of alunos) {
-        const index = banco.alunos.findIndex(
-          (a: aluno) => a.id === alunoImportado.id,
+      try {
+        const banco = JSON.parse(
+          fsSync.readFileSync("data/database.json", "utf-8"),
         );
 
-        if (index !== -1) {
-          // UPDATE
-          //banco.alunos[index] = alunoImportado;
-          banco.pagamentos[index] = pagamentos.find((p:pagamentos) => p.id === alunoImportado.id)
-        } else {
-          // INSERT
-          banco.alunos.push(alunoImportado);
-          banco.pagamentos.push(pagamentos.find((p:pagamentos) => p.id === alunoImportado.id))
+        for (const alunoImportado of alunos) {
+          const pagamento = pagamentos.find((p) => p.id === alunoImportado.id);
+
+          if (!pagamento) {
+            console.error(
+              `Pagamento não encontrado para o aluno ${alunoImportado.id}`,
+            );
+            continue;
+          }
+
+          const index = banco.alunos.findIndex(
+            (a: aluno) => a.id === alunoImportado.id,
+          );
+
+          if (index !== -1) {
+            // UPDATE
+            // banco.alunos[index] = alunoImportado;
+
+            banco.pagamentos[index] = pagamento;
+          } else {
+            // INSERT
+            banco.alunos.push(alunoImportado);
+            banco.pagamentos.push(pagamento);
+          }
         }
+
+        fsSync.writeFileSync(
+          "data/database.json",
+          JSON.stringify(banco, null, 2),
+        );
+
+        fsSync.unlinkSync(req.file!.path);
+
+        return res.json({
+          sucesso: true,
+          adicionados: alunos.length,
+          ignorados: linhasInvalidas.length,
+          linhasInvalidas,
+        });
+      } catch (error) {
+        console.error(error);
+
+        if (fsSync.existsSync(req.file!.path)) {
+          fsSync.unlinkSync(req.file!.path);
+        }
+
+        return res.json({
+          sucesso: true,
+          adicionados: alunos.length,
+          ignorados: linhasInvalidas.length,
+          linhasInvalidas,
+        });
       }
+    })
+    .on("error", (error) => {
+      console.error(error);
 
-      // Salva novamente
-      fsSync.writeFileSync(
-        "data/database.json",
-        JSON.stringify(banco, null, 2),
-      );
-
-      // Remove CSV temporário
-      fsSync.unlinkSync(req.file!.path);
+      if (fsSync.existsSync(req.file!.path)) {
+        fsSync.unlinkSync(req.file!.path);
+      }
 
       return res.json({
         sucesso: true,
         adicionados: alunos.length,
+        ignorados: linhasInvalidas.length,
+        linhasInvalidas,
       });
     });
 });

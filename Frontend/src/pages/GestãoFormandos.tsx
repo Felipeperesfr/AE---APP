@@ -172,13 +172,25 @@ export default function GestãoFormandos() {
 
 
     const filteredAlunos = useMemo(() => {
-        const filter1 = alunos.filter((a: aluno) =>
-            a.nome.trim().toLowerCase().includes(searchValue.trim().toLowerCase()))
+        const filter1 = alunos.filter((a: aluno) => {
+            if (!a.nome) {
+                console.log("Invalid aluno:", a);
+                return false;
+            }
+
+            return a.nome
+                .trim()
+                .toLowerCase()
+                .includes(searchValue.trim().toLowerCase());
+        });
+
         return filter1.filter((a: aluno) =>
-            a.escola.includes(selectFilterValue))
-    }, [alunos, searchValue, selectFilterValue])
+            (a.escola ?? "").includes(selectFilterValue)
+        );
+    }, [alunos, searchValue, selectFilterValue]);
 
     const sortedAlunos = useMemo(() => {
+        console.log("Filtered alunos: ", filteredAlunos)
         return [...filteredAlunos].sort((a, b) => {
             const aVal = a[sortKey].toLowerCase();
             const bVal = b[sortKey].toLowerCase();
@@ -295,6 +307,10 @@ export default function GestãoFormandos() {
             setFilterIcon(faFilterCircleXmark)
     }, [filteredAlunos.length, alunos.length])
 
+    useEffect(() => {
+        console.log(alunos.find(a => JSON.stringify(a).includes("undefined")));
+    }, [alunos]);
+
 
 
     useEffect(() => {
@@ -308,18 +324,46 @@ export default function GestãoFormandos() {
             const alunosData = await alunosRes.json();
             const escolasData = await escolasRes.json();
             const pagamentosData = await pagamentoRes.json();
-            const escolaNomes: string[] = []
 
-            setAlunos(alunosData);
-            escolasData.map((e: escola) => (
-                escolaNomes.push(e.nome)
-            ))
-            setEscolas(escolaNomes)
-            setPagamentos(pagamentosData)
+            const escolaNomes: string[] = [];
+
+            // Validate imported students
+            const invalidAlunos = alunosData.filter(
+                (a: any) =>
+                    !a.nome ||
+                    !a.escola ||
+                    !a.id
+            );
+
+            if (invalidAlunos.length > 0) {
+                toast.warning(
+                    `${invalidAlunos.length} aluno(s) foram ignorados por possuírem dados incompletos. Informe o desenvolvedor.`
+                );
+
+                console.group("Alunos inválidos encontrados");
+                console.table(invalidAlunos);
+                console.groupEnd();
+            }
+
+            // Only keep valid records
+            const validAlunos = alunosData.filter(
+                (a: any) =>
+                    a.nome &&
+                    a.escola &&
+                    a.id
+            );
+
+            setAlunos(validAlunos);
+
+            escolasData.forEach((e: escola) => {
+                escolaNomes.push(e.nome);
+            });
+
+            setEscolas(escolaNomes);
+            setPagamentos(pagamentosData);
         };
 
         loadData();
-
     }, []);
 
 

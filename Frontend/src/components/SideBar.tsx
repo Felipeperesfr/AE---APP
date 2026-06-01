@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { toast } from "react-toastify";
 import ModernIcon from "./ModernIcon";
 import React, { useState } from 'react';
 import { faUpload, faClipboardList, faGear, faCheck, faArrowCircleLeft, faList, faGraduationCap } from "@fortawesome/free-solid-svg-icons";
@@ -21,15 +22,44 @@ export default function SideBar() {
 
         formData.append("file", file);
 
-        const response = await fetch(
-            `${process.env.REACT_APP_API_URL}/getcsv`,
-            {
-                method: "POST",
-                body: formData
-            }
-        );
+        try {
+            const response = await fetch(
+                `${process.env.REACT_APP_API_URL}/getcsv`,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
 
-        return await response.json();
+            const data = await response.json();
+
+
+
+            if (!response.ok) {
+                toast.error(data.error ?? "Erro ao importar CSV");
+                return;
+            }
+
+            if (data.ignorados > 0) {
+                toast.warning(
+                    `Importação concluída. ${data.adicionados} registro(s) processados e ${data.ignorados} linha(s) foram ignoradas por possuírem dados inválidos.`
+                );
+
+                console.group("Linhas inválidas do CSV");
+                console.table(data.linhasInvalidas);
+                console.groupEnd();
+            } else {
+                toast.success(
+                    `${data.adicionados} registro(s) importados com sucesso!`
+                );
+            }
+
+            return data;
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Erro ao enviar arquivo.");
+        }
     }
 
     return (
@@ -60,7 +90,7 @@ export default function SideBar() {
                         onChange={(event) => { uploadCSV(event.target) }}
                     />
 
-                    <label  className="menu-entry" htmlFor="csvInput">
+                    <label className="menu-entry" htmlFor="csvInput">
                         <ModernIcon icon={faUpload} text="Upload CSV" distance={60} />
                     </label>
 
