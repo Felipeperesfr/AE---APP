@@ -47,7 +47,7 @@ export default function ParcelaPagamento({
         };
 
         const evaluateP = (m: number): void => {
-            if (textoParcela === "PIX" || textoParcela === "CC" || textoParcela === "BOL.")
+            if (textoParcela)
                 setStatusPagamento("pago")
             else {
                 const now = new Date()

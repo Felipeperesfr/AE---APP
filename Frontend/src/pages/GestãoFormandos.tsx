@@ -40,10 +40,10 @@ export default function GestãoFormandos() {
         tel1: string,
         tel2: string | "",
         parcelas: string,
-        valor: string,
+        valorParcelas: string,
         ano: string,
         turma: string,
-        anotacoes: string | "",
+        anotações: string | "",
         status: string, // "Criado" | "Mensagem enviada" | "Pagamento em dia" | "Pagamento atrasado" | "Cancelado"
         metodo: string,
         id: string
@@ -72,10 +72,10 @@ export default function GestãoFormandos() {
         tel1: "",
         tel2: "",
         parcelas: "",
-        valor: "",
+        valorParcelas: "",
         ano: "",
         turma: "",
-        anotacoes: "",
+        anotações: "",
         status: "Criado",
         metodo: "",
         id: ""
@@ -83,7 +83,7 @@ export default function GestãoFormandos() {
 
     const { open: openWarn, confirm: confirmWarn, handleResolve: handleResolveWarn } = useConfirm()
     const { open: openDelete, confirm: confirmDelete, handleResolve: handleResolveDelete } = useConfirm()
-
+    const { open: openEraseBD, confirm: confirmEraseBD, handleResolve: handleResolveEraseBD } = useConfirm()
 
 
     // Funções Gerais
@@ -147,6 +147,27 @@ export default function GestãoFormandos() {
         }
     }
 
+    const eraseBD = async (): Promise<void> => {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/eraseBD`, {
+            method: "POST"
+        })
+
+        if (response.ok) {
+            toast.success("BD apagado com sucesso")
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000)
+        }
+        else {
+            const errorData = await response.json();
+            toast.error(errorData.error ?? "Erro inesperado.");
+            return;
+        }
+    }
+
+
+
+
 
     // Constantes useState
 
@@ -172,6 +193,7 @@ export default function GestãoFormandos() {
 
 
     const filteredAlunos = useMemo(() => {
+        console.log(alunos)
         const filter1 = alunos.filter((a: aluno) => {
             if (!a.nome) {
                 console.log("Invalid aluno:", a);
@@ -353,6 +375,7 @@ export default function GestãoFormandos() {
                     a.id
             );
 
+
             setAlunos(validAlunos);
 
             escolasData.forEach((e: escola) => {
@@ -376,6 +399,14 @@ export default function GestãoFormandos() {
                 message="Essa ação não pode ser desfeita."
                 //onConfirm={async () => deleteProduct(selectedProduct!.id)}
                 onResolve={handleResolveDelete}
+            />
+
+            <ConfirmBox
+                open={openEraseBD}
+                title="Apagar o Banco de Dados??"
+                message="Essa ação não pode ser desfeita."
+                //onConfirm={async () => deleteProduct(selectedProduct!.id)}
+                onResolve={handleResolveEraseBD}
             />
 
             <ConfirmBox
@@ -481,7 +512,7 @@ export default function GestãoFormandos() {
                             </div>
                             <div className="input">
                                 <p>Valor:</p>
-                                <input type="text" value={selectedAluno.valor} onChange={(e) => { setSelectedAluno(prev => ({ ...prev!, valor: e.target.value })) }} />
+                                <input type="text" value={selectedAluno.valorParcelas} onChange={(e) => { setSelectedAluno(prev => ({ ...prev!, valor: e.target.value })) }} />
                             </div>
                             <div className="input">
                                 <p>Método:</p>
@@ -494,7 +525,7 @@ export default function GestãoFormandos() {
                             </div>
                             <div className="input">
                                 <p>Anotações:</p>
-                                <input type="text" value={selectedAluno.anotacoes} onChange={(e) => { setSelectedAluno(prev => ({ ...prev!, anotacoes: e.target.value })) }} />
+                                <input type="text" value={selectedAluno.anotações} onChange={(e) => { setSelectedAluno(prev => ({ ...prev!, anotacoes: e.target.value })) }} />
                             </div>
 
                             <button onClick={async () => {
@@ -504,13 +535,13 @@ export default function GestãoFormandos() {
                                 const tel2 = selectedAluno.tel2
                                 const ano = selectedAluno.ano
                                 const turma = selectedAluno.turma
-                                const anotacoes = selectedAluno.anotacoes
+                                const anotacoes = selectedAluno.anotações
                                 const status = "Criado"
                                 const parcelas = selectedAluno.parcelas
-                                const valor = selectedAluno.valor
+                                const valor = selectedAluno.valorParcelas
                                 const metodo = selectedAluno.metodo
 
-                                if ((Number.isNaN(valor) || Number.isNaN(parcelas)) || (selectedAluno.valor.trim() === "") || parcelas.trim() === "") {
+                                if ((Number.isNaN(valor) || Number.isNaN(parcelas)) || (selectedAluno.valorParcelas.trim() === "") || parcelas.trim() === "") {
                                     toast.error("Valor/Parcelas inválido")
                                     return
                                 }
@@ -605,7 +636,7 @@ export default function GestãoFormandos() {
                             </div>
                             <div className="input">
                                 <p>Valor:</p>
-                                <input type="text" value={selectedAluno.valor} onChange={(e) => { setSelectedAluno(prev => ({ ...prev!, valor: e.target.value })) }} />
+                                <input type="text" value={selectedAluno.valorParcelas} onChange={(e) => { setSelectedAluno(prev => ({ ...prev!, valor: e.target.value })) }} />
                             </div>
                             <div className="input">
                                 <p>Método:</p>
@@ -618,7 +649,7 @@ export default function GestãoFormandos() {
                             </div>
                             <div className="input">
                                 <p>Anotações:</p>
-                                <input type="text" value={selectedAluno.anotacoes} onChange={(e) => { setSelectedAluno(prev => ({ ...prev!, anotacoes: e.target.value })) }} />
+                                <input type="text" value={selectedAluno.anotações} onChange={(e) => { setSelectedAluno(prev => ({ ...prev!, anotacoes: e.target.value })) }} />
                             </div>
                             <div className="input">
                                 <p>Status:</p>
@@ -638,11 +669,11 @@ export default function GestãoFormandos() {
                                 const tel2 = selectedAluno.tel2
                                 const ano = selectedAluno.ano
                                 const turma = selectedAluno.turma
-                                const anotacoes = selectedAluno.anotacoes
+                                const anotacoes = selectedAluno.anotações
                                 const status = selectedAluno.status
                                 const parcelas = selectedAluno.parcelas
                                 const metodo = selectedAluno.metodo
-                                const valor = selectedAluno.valor
+                                const valor = selectedAluno.valorParcelas
 
                                 if ((Number.isNaN(valor) || Number.isNaN(parcelas)) || (String(valor).trim() === "") || String(parcelas).trim() === "") {
                                     toast.error("Valor/Parcelas inválido")
@@ -743,14 +774,14 @@ export default function GestãoFormandos() {
                                                                                     </div>
                                                                                     <div className="anotacoes">
                                                                                         <h2>Anotações</h2>
-                                                                                        <input defaultValue={a.anotacoes} type="text" onFocus={() => setValueAnotacao(a.anotacoes)} onChange={(e) => setValueAnotacao(e.target.value)} onKeyDown={(e) => {
+                                                                                        <input defaultValue={a.anotações} type="text" onFocus={() => setValueAnotacao(a.anotações)} onChange={(e) => setValueAnotacao(e.target.value)} onKeyDown={(e) => {
                                                                                             if (e.key === "Enter") {
-                                                                                                if (valueAnotacao !== a.anotacoes)
+                                                                                                if (valueAnotacao !== a.anotações)
                                                                                                     sendAnotacoesValue(a.id)
                                                                                             }
 
                                                                                         }} onBlur={() => {
-                                                                                            if (valueAnotacao !== a.anotacoes) {
+                                                                                            if (valueAnotacao !== a.anotações) {
                                                                                                 console.log(valueAnotacao)
                                                                                                 sendAnotacoesValue(a.id)
                                                                                             }
@@ -793,7 +824,11 @@ export default function GestãoFormandos() {
                                     <h2 className="menor-espaço">Método</h2>
                                     <h2 className="maior-espaço">Status</h2>
                                     <h2 className="maior-espaço">Anotações</h2>
-                                    <div className="add-icon"><span onClick={() => { setModalWidth(450); setModalHeight(525); setModalMode("add"); setopenModalAluno(true); setSelectedAluno(EMPTY_ALUNO) }}><ModernIcon direction="vertical-down" icon={faPlusCircle} text="Adicionar Aluno"></ModernIcon></span></div>
+                                    <div className="add-icon">
+                                        <span onClick={() => { setModalWidth(450); setModalHeight(525); setModalMode("add"); setopenModalAluno(true); setSelectedAluno(EMPTY_ALUNO) }}><ModernIcon direction="vertical-down" icon={faPlusCircle} text="Adicionar Aluno"></ModernIcon></span>
+                                        <span onClick={async () => { const userReturn = await confirmEraseBD(); if (userReturn) eraseBD() }}><ModernIcon direction="vertical-down" icon={faTrash} text="Apagar BD"></ModernIcon></span>
+                                    </div>
+
                                 </div>
                                 <ul>
                                     {sortedAlunos.map(a => (
@@ -807,13 +842,13 @@ export default function GestãoFormandos() {
                                                 <span className="menor-espaço"><a href={`https://wa.me/55${a.tel1}`} target="_blank" rel="noopener noreferrer">{a.tel1}</a></span>
                                                 <span className="menor-espaço"><a href={`https://wa.me/55${a.tel2}`} target="_blank" rel="noopener noreferrer">{a.tel2}</a></span>
                                                 <span className="menor-espaço">{a.parcelas}</span>
-                                                <span className="menor-espaço">{a.valor}</span>
+                                                <span className="menor-espaço">{a.valorParcelas}</span>
                                                 <span className="menor-espaço">{a.metodo}</span>
                                                 <span className="maior-espaço"><select name="status-select" value={a.status} onChange={async (e) => {
                                                     const response = await fetch(`${process.env.REACT_APP_API_URL}/editaluno/${a.id}`, {
                                                         method: "PUT",
                                                         headers: { "Content-Type": "application/json", },
-                                                        body: JSON.stringify({ nome: a.nome, escola: a.escola, tel1: a.tel1, tel2: a.tel2, ano: a.ano, turma: a.turma, anotacoes: a.anotacoes, status: e.target.value, parcelas: a.parcelas, valor: a.valor, metodo: a.metodo }),
+                                                        body: JSON.stringify({ nome: a.nome, escola: a.escola, tel1: a.tel1, tel2: a.tel2, ano: a.ano, turma: a.turma, anotacoes: a.anotações, status: e.target.value, parcelas: a.parcelas, valor: a.valorParcelas, metodo: a.metodo }),
                                                     })
 
                                                     if (response.ok) {
@@ -832,7 +867,7 @@ export default function GestãoFormandos() {
                                                     <option value="Pagamento atrasado">Pagamento atrasado</option>
                                                     <option value="Cancelado">Cancelado</option>
                                                 </select></span>
-                                                <span className="maior-espaço">{a.anotacoes}</span>
+                                                <span className="maior-espaço">{a.anotações}</span>
                                                 <div className="icones"><span className="modernIcon" onClick={() => { setModalHeight(565); setModalMode("edit"); setSelectedAluno(a); setopenModalAluno(true) }}><ModernIcon distance={40} direction="horizontal-left" icon={faPenToSquare} text="Editar"></ModernIcon></span>
                                                     <span onClick={async () => { setSelectedAluno(a); const userReturn = await confirmDelete(); if (userReturn) deleteAluno(a.id) }} className="modernIcon"><ModernIcon direction="horizontal-right" icon={faTrash} text="Excluir"></ModernIcon></span></div>
                                             </div>

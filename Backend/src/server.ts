@@ -476,6 +476,22 @@ app.post("/api/newaluno", async (req: Request, res: Response) => {
   return res.status(201).send(newAluno);
 });
 
+app.post("/api/eraseBD", async (req: Request, res: Response) => {
+  const db = await loadDB();
+
+  try {
+    db.alunos = [];
+    db.pagamentos = [];
+
+    await saveDB(db);
+
+    return res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    return res.status(404);
+  }
+});
+
 app.delete("/api/deleteproduct/:id", async (req: Request, res: Response) => {
   const db = await loadDB();
   const id = req.params.id;
@@ -643,7 +659,7 @@ app.post("/api/getcsv", upload.single("file"), async (req, res) => {
   }
 
   const alunos: aluno[] = [];
-  const pagamentos: pagamentos[] = [];
+  const pagamentos: Partial<pagamentos>[] = [];
   const linhasInvalidas: any[] = [];
   let linhaAtual = 1;
 
@@ -652,15 +668,20 @@ app.post("/api/getcsv", upload.single("file"), async (req, res) => {
     .pipe(
       csv({
         mapHeaders: ({ header }) =>
-          header.replace(/"/g, "").trim().toLowerCase(),
+          header
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/"/g, "")
+            .trim()
+            .toLowerCase(),
       }),
     )
     .on("data", (row) => {
       // Validação dos campos obrigatórios
-
+      //console.log(Object.keys(row));
+      //console.log("ROW COMPLETO:", row);
       const nomeValido = !!String(row.nome ?? "").trim();
       const escolaValida = !!String(row.escola ?? "").trim();
-
 
       linhaAtual++;
 
@@ -681,22 +702,23 @@ app.post("/api/getcsv", upload.single("file"), async (req, res) => {
         valorParcelas: row.valorparcela,
         ano: row.ano,
         turma: row.turma,
-        anotações: row.anotações ?? "",
+        anotações: row.anotacoes ?? "",
         status: "Importado",
         metodo: "",
       };
 
-      const pagamento: pagamentos = {
-        id,
-        p1: row.PG1,
-        p2: row.PG2,
-        p3: row.PG3,
-        p4: row.PG4,
-        p5: row.PG5,
-        p6: row.PG6,
-        p7: row.PG7,
-        p8: row.PG8,
-      };
+      const pagamento: Partial<pagamentos> & { id: string } = { id }
+      let qntParcelas = 8
+
+      if (row.parcelas)
+          qntParcelas = row.parcelas
+
+      for (let i = 1; i <= qntParcelas; i++) {
+        pagamento[`p${i}` as keyof pagamentos] =
+          row[`pg${i}` as keyof typeof row]
+      }
+
+      console.log(pagamento)
 
       alunos.push(aluno);
       pagamentos.push(pagamento);

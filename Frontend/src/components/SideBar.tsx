@@ -51,7 +51,10 @@ export default function SideBar() {
             } else {
                 toast.success(
                     `${data.adicionados} registro(s) importados com sucesso!`
-                );
+                )
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000)
             }
 
             return data;
