@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import puppeteer from "puppeteer";
+import puppeteerCore from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 import archiver from "archiver";
 import cors from "cors";
@@ -313,9 +314,17 @@ app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
     const fornecedor = req.body.fornecedor;
     const produtos = req.body.produtos;
 
-    browser = await puppeteer.launch({
-      headless: true,
-    });
+    if (process.env.NODE_ENV === "production") {
+      browser = await puppeteerCore.launch({
+        args: chromium.args,
+        executablePath: await chromium.executablePath(),
+        headless: true,
+      });
+    } else {
+      browser = await puppeteer.launch({
+        headless: true,
+      });
+    }
 
     // 🔽 MULTIPLE PDFs (ZIP)
     if (fornecedor === "Todos Fornecedores") {
