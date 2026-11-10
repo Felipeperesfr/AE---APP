@@ -614,6 +614,7 @@ app.put("/api/editaluno/:id", async (req: Request, res: Response) => {
   const metodo = req.body.metodo;
   const id = req.params.id as string;
   const from = req.query.from;
+  const a = "a"
 
   if (!from) {
     if (!nome || !escola) {
