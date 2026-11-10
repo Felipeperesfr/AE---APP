@@ -1,6 +1,6 @@
 import ModernIcon from "../components/ModernIcon";
 import React, { useState, useEffect, useMemo } from "react";
-import { faFilterCircleXmark, faClose, faPenToSquare, faTrash, faPlusCircle, faFilter, faReceipt, faDatabase, IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faFilterCircleXmark, faClose, faPenToSquare, faTrash, faPlusCircle, faFilter, faReceipt, faDatabase, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useConfirm } from "../components/UseConfirm"
 import { motion, AnimatePresence } from "framer-motion"
@@ -61,6 +61,26 @@ export default function GestãoFormandos() {
         p8?: string;
     };
 
+    type LogError = {
+        error: string,
+        fileName: string,
+        timestamp: string
+    }
+
+    type alunosParaBaixa = {
+        id: string,
+        parcela: number
+    }
+    type alunosParaAnalise = {
+        nome: string,
+        id: string,
+        parcela: number,
+        valorRecibo: number,
+        valorDB: number | null,
+        fileName: string,
+        possibleError: string
+    }
+
     type modalModeType = "add" | "edit"
 
 
@@ -88,7 +108,36 @@ export default function GestãoFormandos() {
 
     // Funções Gerais
 
+    function extrairDados(nomeArquivo: string) {
+        const semExtensao = nomeArquivo.replace(/\.[^/.]+$/, "");
+        const semEscola = semExtensao.replace(/^[^-]+-/, "");
 
+        const valorMatch = semEscola.match(/\b(\d+)\b/);
+
+        if (!valorMatch) {
+            return null;
+        }
+
+        const valor = Number(valorMatch[1]);
+
+        const parcelaMatch = semEscola.match(/\b(\d+)a\b/i);
+
+        return {
+            nome: semEscola.substring(0, valorMatch.index).trim(),
+            valor,
+            parcela: parcelaMatch
+                ? Number(parcelaMatch[1])
+                : undefined
+        };
+    }
+
+    function normalizar(texto: string): string {
+        return texto
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toUpperCase()
+            .trim();
+    }
 
     const registerEntry = (aluno: aluno): void => {
         setAlunos(prev => [...prev, aluno]);
@@ -188,12 +237,20 @@ export default function GestãoFormandos() {
     const [modalWidth, setModalWidth] = useState<number>(0)
     const [activeEscola, setActiveEscola] = useState<string | null>(null)
     const [valueAnotacao, setValueAnotacao] = useState<string>("")
+    const [openModalBaixa, setOpenModalBaixa] = useState<boolean>(false)
+    const [openModalAnalise, setOpenModalAnalise] = useState<boolean>(false)
+    const [escolaParaBaixa, setEscolaParaBaixa] = useState<string>()
+    const [logErrosJson, setlogErrosJson] = useState<LogError[]>([])
+    const [alunosPbaixaJson, setAlunosPbaixaJson] = useState<alunosParaBaixa[]>([])
+    const [alunosPanaliseJson, setAlunosPanaliseJson] = useState<alunosParaAnalise[]>([])
+    const [alunosPanaliseRegistros, setAlunosPanaliseRegistros] = useState<alunosParaAnalise[]>([])
+    const [alunosAttJson, setAlunosAttJson] = useState<alunosParaAnalise[]>([])
+
 
     // Constantes useMemo
 
 
     const filteredAlunos = useMemo(() => {
-        console.log(alunos)
         const filter1 = alunos.filter((a: aluno) => {
             if (!a.nome) {
                 console.log("Invalid aluno:", a);
@@ -212,7 +269,6 @@ export default function GestãoFormandos() {
     }, [alunos, searchValue, selectFilterValue]);
 
     const sortedAlunos = useMemo(() => {
-        console.log("Filtered alunos: ", filteredAlunos)
         return [...filteredAlunos].sort((a, b) => {
             const aVal = a[sortKey].toLowerCase();
             const bVal = b[sortKey].toLowerCase();
@@ -329,10 +385,11 @@ export default function GestãoFormandos() {
             setFilterIcon(faFilterCircleXmark)
     }, [filteredAlunos.length, alunos.length])
 
+    /* 
     useEffect(() => {
         console.log(alunos.find(a => JSON.stringify(a).includes("undefined")));
     }, [alunos]);
-
+*/
 
 
     useEffect(() => {
@@ -415,6 +472,178 @@ export default function GestãoFormandos() {
                 message="Há um aluno com o nome semelhante nessa escola, ano e turma! Prosseguir mesmo assim?"
                 onResolve={handleResolveWarn}
             />
+
+
+            <Modal open={openModalBaixa} onClose={() => setOpenModalBaixa(false)} width={400} height={150}>
+                <header>
+                    <div />
+                    <h1>Download Recibos</h1>
+                    <span className="close-modal-icon" onClick={() => setOpenModalBaixa(false)}><ModernIcon icon={faClose} direction="horizontal-right" text="Fechar"></ModernIcon></span>
+                </header>
+                <div className="body">
+                    <div className="input">
+                        <p className="p-baixa">Escola: </p>
+                        <select name="fornecedor-select" onChange={e => (
+                            setEscolaParaBaixa(e.target.value)
+                        )}>
+                            <>
+                                <option value=""></option>
+                                {
+                                    escolas.sort((a, b) => a.localeCompare(b)).map((e: string) => (
+                                        <option key={e} value={e}>{e}</option>
+                                    ))
+                                }
+                            </>
+                        </select>
+                    </div>
+                    <div className="input-recibos">
+                        <label className="upload-btn">
+                            Selecionar Recibos
+                            <input
+                                type="file"
+                                multiple
+                                onChange={async (e) => {
+
+                                    if (!escolaParaBaixa) {
+                                        toast.warning("Escola não selecionada!")
+                                        return
+                                    }
+
+                                    const logErros: LogError[] = []
+                                    const alunosPbaixa: alunosParaBaixa[] = []
+                                    const alunosPanalise: alunosParaAnalise[] = []
+                                    const files = e.target.files;
+                                    if (files) {
+                                        for (const file of Array.from(files)) {
+                                            //console.log(file.name)
+                                            const dados = extrairDados(file.name)
+                                            if (!dados)
+                                                continue
+                                            if (dados.parcela === undefined)
+                                                logErros.push({ error: "parcela não encontrada", fileName: file.name, timestamp: new Date().toLocaleString("pt-BR") })
+                                            else {
+                                                const palavras = normalizar(dados.nome)
+                                                    .split(/\s+/)
+                                                    .filter(Boolean);
+
+                                                const alunoAchado = alunos.find((a: aluno) => {
+                                                    const nomeBD = normalizar(a.nome);
+                                                    const escolaBD = normalizar(a.escola);
+
+                                                    return (
+                                                        escolaBD === normalizar(escolaParaBaixa) &&
+                                                        palavras.every(palavra =>
+                                                            nomeBD.includes(palavra.toUpperCase())
+                                                        )
+                                                    );
+                                                })
+
+                                                if (alunoAchado) {
+                                                    if (!alunoAchado.valorParcelas)
+                                                        alunosPanalise.push({ fileName: file.name, valorDB: null, nome: alunoAchado.nome, id: alunoAchado.id, parcela: dados.parcela, valorRecibo: dados.valor, possibleError: "aluno sem valor de parcela" })
+                                                    else {
+                                                        if (Number(alunoAchado.valorParcelas.replace("R$", "").trim()) !== dados.valor)
+                                                            alunosPanalise.push({ fileName: file.name, valorDB: Number(alunoAchado.valorParcelas.replace("R$", "").trim()), nome: alunoAchado.nome, id: alunoAchado.id, parcela: dados.parcela, valorRecibo: dados.valor, possibleError: "aluno com valor de parcela diferente" })
+                                                        else
+                                                            alunosPbaixa.push({ id: alunoAchado.id, parcela: dados.parcela })
+                                                    }
+                                                }
+                                                else
+                                                    logErros.push({ error: "aluno não encontrado", fileName: file.name, timestamp: new Date().toLocaleString("pt-BR") })
+                                            }
+                                        }
+
+                                        /* 
+                                        console.log("Alunos a dar baixa: ", alunosPbaixa)
+                                        console.log("Alunos para análise: ", alunosPanalise)
+                                        console.log("Recibos com erros: ", logErros)
+                                        */
+
+                                        setAlunosPbaixaJson(alunosPbaixa)
+                                        setlogErrosJson(logErros)
+
+
+                                        const semDuplicados = [
+                                            ...new Map(
+                                                alunosPanalise.map(aluno => [aluno.nome, aluno])
+                                            ).values()
+                                        ];
+
+                                        setAlunosPanaliseJson(semDuplicados)
+                                        setAlunosAttJson(alunosPanalise)
+                                        setAlunosPanaliseRegistros(alunosPanalise)
+
+                                        setOpenModalAnalise(true)
+                                        setOpenModalBaixa(false)
+                                    }
+                                }}
+                                hidden
+                            />
+                        </label>
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal open={openModalAnalise} onClose={() => setOpenModalAnalise(false)} >
+                <header>
+                    <div />
+                    <h1>Recibos a serem análisados</h1>
+                    <span className="close-modal-icon" onClick={() => setOpenModalAnalise(false)}><ModernIcon icon={faClose} direction="horizontal-right" text="Fechar"></ModernIcon></span>
+                </header>
+                <div className="body">
+                    <div className="loopAnalises">
+                        <h2>Alunos sem valor de parcela ou com valor diferente de parcela: </h2>
+                        <div className="entries-container">
+                            {alunosPanaliseJson.map((aa: alunosParaAnalise) => (
+                                <div className="recibo-entry">
+                                    <span>{aa.nome}: Valor cadastrado: {aa.valorDB === null ? "vazio" : aa.valorDB} → Valor Recibo: {aa.valorRecibo}</span>
+                                    <input
+                                        className="checkbox-analiseRecibo"
+                                        type="checkbox"
+                                        checked={alunosAttJson.some(aluno => aluno.id === aa.id)}
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                const parcelasDoAluno = alunosPanaliseRegistros.filter(
+                                                    aluno => aluno.id === aa.id
+                                                );
+
+                                                setAlunosAttJson(prev => [
+                                                    ...prev,
+                                                    ...parcelasDoAluno
+                                                ]);
+                                                setlogErrosJson(prev =>
+                                                    prev.filter(log => log.fileName !== aa.fileName)
+                                                );
+                                            } else {
+                                                setAlunosAttJson(prev =>
+                                                    prev.filter(aluno => aluno.id !== aa.id)
+                                                );
+                                                setlogErrosJson(prev => [...prev, { fileName: aa.fileName, error: "Valor de Parcela divergente", timestamp: new Date().toLocaleString("pt-BR") }])
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="botoes-alterar-parcela">
+                        <button onClick={async () => {
+                            const response = await fetch(`${process.env.REACT_APP_API_URL}/baixa`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json", },
+                                body: JSON.stringify({ baixa: alunosPbaixaJson, att: alunosAttJson, log: logErrosJson }),
+                            }
+                            )
+                            if (response.ok) {
+                                toast.success("Atualização bem sucedida!")
+                            }
+                            else
+                                toast.error(`Erro: ${response.statusText}`)
+                        }}>Alterar os valores selecionados</button>
+                    </div>
+                </div>
+            </Modal>
+
 
             <Modal open={openModalFilter} onClose={() => setopenModalFilter(false)} height={150}>
                 <header>
@@ -722,6 +951,8 @@ export default function GestãoFormandos() {
                 <div className="bar-selection">
                     <span className={`first bar ${subpage === "gestão-formandos" ? "active" : ""}`} onClick={() => { setSubpage("gestão-formandos") }}><ModernIcon direction="vertical-up" distance={50} icon={faReceipt} text="Gestão de Baixas"></ModernIcon></span>
                     <span className={`second bar ${subpage === "gestão-formandos" ? "" : "active"}`} onClick={() => setSubpage("bd")}><ModernIcon direction="vertical-up" distance={50} icon={faDatabase} text="Banco de Dados"></ModernIcon></span>
+                    <span className={"second bar"} onClick={() => setOpenModalBaixa(true)}><ModernIcon direction="vertical-up" distance={50} icon={faDownload} text="Download Recibos"></ModernIcon></span>
+
                 </div>
                 <div className="subpage">
                     {subpage === "gestão-formandos" ?

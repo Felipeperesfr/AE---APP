@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer";
 import chromium from "@sparticuz/chromium";
 import archiver from "archiver";
 import cors from "cors";
@@ -32,6 +32,13 @@ type produto = {
   id: string;
 };
 
+type pdfProduct = {
+  nome: string;
+  quantidade: number;
+  unidade: string;
+  fornecedor: string;
+};
+
 type pagamentos = {
   id: string;
   p1: string;
@@ -62,6 +69,26 @@ type aluno = {
   anotações: string | null;
   status: string;
   metodo: string;
+};
+
+type LogError = {
+  error: string;
+  fileName: string;
+  timestamp: string;
+};
+
+type alunosParaBaixa = {
+  id: string;
+  parcela: number;
+};
+type alunosParaAnalise = {
+  nome: string;
+  id: string;
+  parcela: number;
+  valorRecibo: number;
+  valorDB: number | null;
+  fileName: string;
+  possibleError: string;
 };
 
 const EMPTY_DB = {
@@ -153,8 +180,9 @@ let dbQueue = Promise.resolve<any>(null);
 
 export async function reportTemplate(
   fornecedor: string,
-  peopleQuantity: number,
+  produtos: pdfProduct[],
 ) {
+  /*
   const data = await loadDB();
   const filteredProducts: produto[] = data.products.filter(
     (p: produto) => p.fornecedor === fornecedor,
@@ -163,7 +191,7 @@ export async function reportTemplate(
     ...p,
     valor: Math.ceil(p.valor * peopleQuantity),
   }));
-
+  */
   return `
     <!DOCTYPE html>
     <html>
@@ -218,17 +246,17 @@ export async function reportTemplate(
               <th>Unidade</th>
             </tr>
           </thead>
-
           <tbody>
-            ${mappedProducts
+            ${produtos
+              .filter((p) => p.quantidade !== 0)
               .map(
                 (p) => `
-              <tr>
-                <td>${p.nome}</td>
-                <td>${p.valor}</td>
-                <td>${p.unidade}</td>
-              </tr>
-            `,
+                  <tr>
+                    <td>${p.nome}</td>
+                    <td>${p.quantidade}</td>
+                    <td>${p.unidade}</td>
+                  </tr>
+                `,
               )
               .join("")}
           </tbody>
@@ -283,11 +311,9 @@ app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
 
   try {
     const fornecedor = req.body.fornecedor;
-    const peopleQuantity = req.body.peopleQuantity;
+    const produtos = req.body.produtos;
 
     browser = await puppeteer.launch({
-      args: chromium.args,
-      executablePath: await chromium.executablePath(),
       headless: true,
     });
 
@@ -313,7 +339,11 @@ app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
       archive.pipe(res);
 
       for (const f of fornecedores) {
-        const html = await reportTemplate(f, peopleQuantity);
+        const filteredProducts: pdfProduct[] = produtos.filter(
+          (p: pdfProduct) => p.fornecedor === f,
+        );
+        const html = await reportTemplate(f, filteredProducts);
+        //const html = await reportTemplate(f, peopleQuantity);
         const page = await browser.newPage();
 
         await page.setContent(html, {
@@ -337,7 +367,7 @@ app.post("/api/getPDFFiles", async (req: Request, res: Response) => {
     }
 
     // 🔽 SINGLE PDF
-    const html = await reportTemplate(fornecedor, peopleQuantity);
+    const html = await reportTemplate(fornecedor, produtos);
     const page = await browser.newPage();
 
     await page.setContent(html, {
@@ -430,6 +460,31 @@ app.post("/api/newproduct", async (req: Request, res: Response) => {
   await saveDB(db);
 
   return res.status(201).send(newProduct);
+});
+
+app.post("/api/baixa", async (req: Request, res: Response) => {
+  const db = await loadDB();
+  const dados = req.body;
+  const baixaArray = dados.baixa;
+  const attArray = dados.att;
+  const ErrorLog = dados.log;
+
+  baixaArray.forEach((baixa: alunosParaBaixa) => {
+    const pagamento = db.pagamentos.find((p: pagamentos) => p.id === baixa.id);
+    pagamento[`p${baixa.parcela}`] = "PG";
+    console.log(pagamento);
+  });
+
+  attArray.forEach((att: alunosParaAnalise) => {
+    const aluno = db.alunos.find((a: aluno) => a.id === att.id);
+    const pagamento = db.pagamentos.find((p: pagamentos) => p.id === att.id);
+    aluno.valor = att.valorRecibo;
+    pagamento[`p${att.parcela}`] = "PG";
+  });
+
+  await saveDB(db);
+
+  return res.status(201);
 });
 
 app.post("/api/newescola", async (req: Request, res: Response) => {
@@ -707,18 +762,17 @@ app.post("/api/getcsv", upload.single("file"), async (req, res) => {
         metodo: "",
       };
 
-      const pagamento: Partial<pagamentos> & { id: string } = { id }
-      let qntParcelas = 8
+      const pagamento: Partial<pagamentos> & { id: string } = { id };
+      let qntParcelas = 8;
 
-      if (row.parcelas)
-          qntParcelas = row.parcelas
+      if (row.parcelas) qntParcelas = row.parcelas;
 
       for (let i = 1; i <= qntParcelas; i++) {
         pagamento[`p${i}` as keyof pagamentos] =
-          row[`pg${i}` as keyof typeof row]
+          row[`pg${i}` as keyof typeof row];
       }
 
-      console.log(pagamento)
+      console.log(pagamento);
 
       alunos.push(aluno);
       pagamentos.push(pagamento);

@@ -137,6 +137,7 @@ export default function ListaCompras() {
     index: number,
     value: string
   ) => {
+    console.log("entrei aqui")
     setEditablePdfProducts(prev =>
       prev.map((p, i) =>
         i === index
@@ -224,7 +225,7 @@ export default function ListaCompras() {
         </div>
       </Modal>
 
-      <Modal open={openModalProduct} onClose={() => setopenModalProduct(false)} width={"450px"} height={"265px"}>
+      <Modal open={openModalProduct} onClose={() => setopenModalProduct(false)} width={"450px"} height={"300px"}>
         <header>
           <div />
           <h1>
@@ -381,7 +382,8 @@ export default function ListaCompras() {
                           body: JSON.stringify({
                             fornecedor: fornecedorPDF,
                             fornecedores: fornecedores,
-                            peopleQuantity: peopleValue
+                            peopleQuantity: peopleValue,
+                            produtos: editablePdfProducts
                           }),
                           headers: { "Content-Type": "application/json" }
                         });

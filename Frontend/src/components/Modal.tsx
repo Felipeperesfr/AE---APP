@@ -9,7 +9,7 @@ export interface ModalProps {
     height?: string | number;
 }
 
-const Modal: React.FC<ModalProps> = ({ open, onClose, children, width, height }) => {
+const Modal: React.FC<ModalProps> = ({ open, onClose, children, width="fit-content", height="fit-content" }) => {
 
     useEffect(() => {
         const handleEsc = (event: KeyboardEvent) => {
