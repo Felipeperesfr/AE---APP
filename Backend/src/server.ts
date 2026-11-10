@@ -30,7 +30,7 @@ type produto = {
   unidade: String;
   fornecedor: String;
   valor: number;
-  id: string;
+  id: number;
 };
 
 type pdfProduct = {
@@ -564,7 +564,7 @@ app.delete("/api/deleteproduct/:id", async (req: Request, res: Response) => {
     return res.status(400).json({ error: "ID inválido" });
   }
 
-  const index = db.products.findIndex((p: produto) => p.id === id);
+  const index = db.products.findIndex((p: produto) => p.id === Number(id));
 
   if (index === -1) {
     return res.status(404).json({ error: "Produto não encontrado" });
@@ -689,13 +689,15 @@ app.put("/api/editproduct/:id", async (req: Request, res: Response) => {
   const fornecedor = req.body.fornecedor;
   const id = req.params.id;
 
+/* 
   if (!nome || valor === undefined) {
     return res.status(400).json({ error: "Nome e Mult. são obrigatórios" });
   }
-
+*/
   const db = await loadDB();
 
-  const product = db.products.find((p: produto) => p.id === id);
+  const product = db.products.find((p: produto) => p.id === Number(id));
+
 
   if (!product) {
     return res.status(404).json({ error: "Produto não encontrado" });
